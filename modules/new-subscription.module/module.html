@@ -1,0 +1,361 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  location_fields,
+  pricing_card_v2,
+  pricing_table,
+%}
+
+{# Module-specific options #}
+{# {% set locations = module.data_query.data.CRM.contact.associations.company_collection__primary.items[0].associations.p_properties_collection__property_to_company.items %} #}
+
+{# Locations v2 query #}
+{% set locations = module.data_query.data.CRM.company.associations.p_properties_collection__property_to_company.items %}
+
+{% set pricingType = {
+  useLegacy: false
+} %}
+
+{# activeCompany set in mjtw-base.html #}
+{% if activeCompany.pricing == 'Old' %}
+  {% do pricingType.update({ useLegacy: true }) %}
+{% endif %}
+
+
+{# Intro variables #}
+{% set introContent = module.intro_content %}
+{% set introVideo = module.intro_video %}
+{% set locationInfo = module.location_info %}
+{% set productCards = module.product_cards %}
+{% set defaultAddons = module.default_add_ons %}
+{% set addOnTables = module.add_on_tables %}
+{% set summaryInfo = module.summary_info %}
+{% set tAndC = module.terms_and_conditions %}
+
+{# Macros #}
+{% macro step_number(label, currentStep, pageStep) %}
+<div class="step-header__step">
+  <span class="step-header__step-number{% if pageStep  == currentStep %} active{% elif pageStep > currentStep %} complete{% endif %}">
+    {% if pageStep > currentStep %}
+      <span class="material-symbols-rounded">done</span>
+    {% else %}
+      {{ currentStep }}
+    {% endif %}
+  </span>
+  <span class="step-header__step-label h6">{{ label }}</span>
+</div>
+{% endmacro %}
+
+{% macro step_header(pageStep) %}
+  <div class="step-header">
+    {% set currentStep = 1 %}
+    {{ step_number(locationType ~ ' Details', currentStep, pageStep) }}
+    {% set currentStep = currentStep + 1 %}
+    {{ step_number('Select Package', currentStep, pageStep) }}
+    {% set currentStep = currentStep + 1 %}
+    {{ step_number('Select Add-ons', currentStep, pageStep) }}
+    {% set currentStep = currentStep + 1 %}
+    {{ step_number('Review Summary', currentStep, pageStep) }}
+  </div>
+{% endmacro %}
+
+{% macro prev_button() %}
+  <button class="new-subscription__prev cta-btn cta-btn--regular cta-btn--gray pagination-prev">Back</button>
+{% endmacro %}
+
+{% macro current_total() %}
+  <div class="new-subscription__current-totals">
+    <div class="new-subscription__current-total">
+      <span class="new-subscription__current-total-label h6">MONTHLY TOTAL</span>
+      <span class="new-subscription__current-total-value h4">
+        <span class="new-subscription__current-total-per-currency">$</span>
+        <span class="new-subscription__current-total-amount">0</span>
+        {# <span class="new-subscription__current-total-per-month">/mo</span> #}
+      </span>
+    </div>
+    <div class="new-subscription__current-setup">
+      <span class="new-subscription__current-setup-label p xsmall">Plus one time set up fee(s)</span>
+      <span class="new-subscription__current-setup-value p small">
+        <span class="new-subscription__current-setup-per-currency">$</span>
+        <span class="new-subscription__current-setup-amount">0</span>
+      </span>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro next_button(label, disabled) %}
+  <button class="new-subscription__next cta-btn cta-btn--regular cta-btn--primary pagination-next{% if disabled %} disabled{% endif %}">
+    {{ label }}
+    <span class="material-symbols-rounded">arrow_forward_ios</span>
+  </button>
+{% endmacro %}
+
+{# Markup #}
+<div class="module new-subscription">
+  <div class="constrain pagination-page-container">
+    <div class="new-subscription__page new-subscription__page--intro pagination-page active">
+      <div class="card">
+        <div class="card__header">
+          {{ step_header(0) }}
+        </div>
+        <div class="card__body{% if introVideo %} card__body--media{% endif %}">
+          <div>
+            {{ introContent }}
+          </div>
+          {% if introVideo %}
+            <div class="card__media">
+              <div class="card__media-inner">
+                <video src="{{ introVideo }}" controls></video>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+        <div class="card__footer">
+          {{ next_button('Get Started') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="new-subscription__page new-subscription__page--location pagination-page">
+      <div class="card">
+        <div class="card__header">
+          {{ step_header(1) }}
+        </div>
+        <div class="card__body{% if locationInfo %} card__body--info{% endif %}">
+          <div>
+            <div class="card card--padded card--color-info">
+              {# <p>{{ locations }}</p> #}
+              <label for="new-subscription-location-select">Use an existing {{ locationType|lower }}</label>
+              <select id="new-subscription-location-select" name="location">
+                <option value="*">Select a{% if locationType == 'Apartment' %}n{% endif %} {{ locationType|lower }}</option>
+                {% for location in locations %}
+                  <option value="{{ location|tojson|escape }}">{{ location.property_name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            {# <div class="new-subscription__or-divider">
+              <span class="new-subscription__or-divider-label">OR</span>
+            </div>
+            <div class="new-subscription__location-new">
+              {{ location_fields(locationType, 'new') }}
+            </div> #}
+          </div>
+          {% if locationInfo %}
+            <div class="card card--padded card--info">
+              {{ locationInfo }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="card__footer">
+          {{ prev_button() }}
+          {{ next_button('Next', true) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="new-subscription__page new-subscription__page--package pagination-page">
+      <div class="card">
+        <div class="card__header">
+          {{ step_header(2) }}
+        </div>
+        <div class="card__body">
+          <h3>Select your geofencing package</h3>
+          <div class="module__grid module__grid--one-col">
+            {% if !pricingType.useLegacy || request.postDict.inpageEditorUI %}
+              {% for product in productCards %}
+                {% if product.main_product %}
+                  <div class="module__grid-item">
+                    {{ pricing_card_v2(product.main_product.properties, 'select', product.setup_fee.properties, product.default_add_on_groups, defaultAddons.table_title) }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            {% if pricingType.useLegacy || request.postDict.inpageEditorUI %}
+              {% for product in productCards %}
+                {% if product.legacy_main_product %}
+                  <div class="module__grid-item" data-legacy="true">
+                    {{ pricing_card_v2(product.legacy_main_product.properties, 'select', product.legacy_setup_fee.properties, product.default_add_on_groups, defaultAddons.table_title) }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+          {% if defaultAddons.products %}
+            <a id="service-details"></a>
+            <br>
+            {{ pricing_table(defaultAddons) }}
+          {% endif %}
+        </div>
+        <div class="card__footer">
+          {{ prev_button() }}
+          {{ current_total() }}
+          {{ next_button('Next', true) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="new-subscription__page new-subscription__page--addons pagination-page">
+      <div class="card">
+        <div class="card__header">
+          {{ step_header(3) }}
+        </div>
+        <div class="card__body">
+          <h3>Customize your package</h3>
+          {% for table in addOnTables %}
+            {% set displayLogic = table.conditional_display_settings.display_logic %}
+            {% set displayProducts = [] %}
+            {% for item in table.conditional_display_settings.display_products %}
+              {% do displayProducts.append(item.id) %}
+            {% endfor %}
+            <div class="new-subscription__table active" data-display="{{ displayLogic }}" data-products="{{ displayProducts }}">
+              
+              {% if table.enable_conditional_logic %}
+                <div class="new-subscription__conditional-logic">
+                  <label for="">{{ table.conditional_logic_title }}</label>
+                  <div class="new-subscription__conditional-logic-items">
+                    <div class="card__input-group">
+                      <label for="{{ name }}-{{ loop.index }}-yes" class="hs-form-radio-display">
+                        <input id="{{ name }}-{{ loop.index }}-yes" name="{{ name }}-{{ loop.index }}" type="radio" value="true" checked><span>Yes</span>
+                      </label>
+                      <label for="{{ name }}-{{ loop.index }}-no" class="hs-form-radio-display">
+                        <input id="{{ name }}-{{ loop.index }}-no" name="{{ name }}-{{ loop.index }}" type="radio" value="false"><span>No</span>
+                      </label>
+                    </div>
+                    {% if table.conditional_logic_decline_info_label || table.conditional_logic_decline_info_description %}
+                      <div class="new-subscription__conditional-logic-message notification notification--info">
+                        <strong class="p small">{{ table.conditional_logic_decline_info_label }}</strong>
+                        <span class="p small">{{ table.conditional_logic_decline_info_description }}</span>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="new-subscription__pricing-table{% if !table.enable_conditional_logic %} active{% else %} new-subscription__pricing-table--has-logic active{% endif %}">
+                {{ pricing_table(table, 'radio') }}
+              </div>
+
+              {% if !loop.last %}
+                <hr>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+        <div class="card__footer">
+          {{ prev_button() }}
+          {{ current_total() }}
+          {{ next_button('Next') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="new-subscription__page new-subscription__page--summary pagination-page">
+      <div class="card">
+        <div class="card__header">
+          {{ step_header(4) }}
+        </div>
+        <div class="card__body card__body--info">
+          <div>
+            <span class="new-subscription__summary-headline h6">Subscription Summary</span>
+            <span id="summary-subscription-name" class="new-subscription__subscription-name h2"></span>
+            <div class="new-subscription__summary-items">
+              <div class="new-subscription__summary-item">
+                <span class="new-subscription__summary-item-label">{{ locationType }} Name</span>
+                <span id="summary-location-name" class="new-subscription__summary-item-value"></span>
+              </div>
+              <div class="new-subscription__summary-item">
+                <span class="new-subscription__summary-item-label">Address</span>
+                <span id="summary-location-address" class="new-subscription__summary-item-value"></span>
+              </div>
+              <div class="new-subscription__summary-item">
+                <span class="new-subscription__summary-item-label">Date Added</span>
+                <span id="summary-date-added" class="new-subscription__summary-item-value"></span>
+              </div>
+              <div class="new-subscription__summary-item">
+                <span class="new-subscription__summary-item-label">Advertising Package</span>
+                <span id="summary-package" class="new-subscription__summary-item-value"></span>
+              </div>
+              <div id="summary-addons" class="new-subscription__summary-addons"></div>
+            </div>
+            {% if summaryInfo %}
+              <div class="new-subscription__summary-info">
+                {{ summaryInfo }}
+              </div>
+            {% endif %}
+          </div>
+          <img id="summary-image" class="new-subscription__summary-image" src="" alt="">
+        </div>
+        <div class="card__body card__body--t-c">
+          {# <div class="card__form-field">
+            <label for="website">Website*</label>
+            <input id="website" name="website" type="text" placeholder="www.example.com">
+          </div> #}
+          <div class="card__form-field">
+            <label for="start_month">Desired Start Month*</label>
+            <p class="xsmall">If you would like your campaign to start as soon as possible please select the current month</p>
+            <select id="start_month" name="start_month">
+              <option value="0" selected disabled>Select a month</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+          <div class="card__form-field">
+            <label for="billing_contact">Billing Contact Name*</label>
+            <input id="billing_contact" name="billing_contact" type="text">
+          </div>
+          <div class="card__form-field">
+            <label for="billing_contact_email">Billing Contact Email*</label>
+            <input id="billing_contact_email" name="billing_contact_email" type="email">
+          </div>
+          <div class="card__form-field">
+            <label for="reporting_same_as_billing">
+              <input id="reporting_same_as_billing" name="reporting_same_as_billing" type="checkbox">
+              <span>Reporting Contact Same As Billing Contact?</span>
+            </label>
+          </div>
+          <div class="card__form-field">
+            <label for="reporting_contact">Reporting Contact Name*</label>
+            <input id="reporting_contact" name="reporting_contact" type="text">
+          </div>
+          <div class="card__form-field">
+            <label for="reporting_contact_email">Reporting Contact Email*</label>
+            <input id="reporting_contact_email" name="reporting_contact_email" type="email">
+          </div>
+          <div class="card__form-field">
+            <label for="creative_same_as_billing">
+              <input id="creative_same_as_billing" name="creative_same_as_billing" type="checkbox">
+              <span>Creative Contact Same As Billing Contact?</span>
+            </label>
+          </div>
+          <div class="card__form-field">
+            <label for="creative_contact">Creative Contact Name*</label>
+            <input id="creative_contact" name="creative_contact" type="text">
+          </div>
+          <div class="card__form-field">
+            <label for="creative_contact_email">Creative Contact Email*</label>
+            <input id="creative_contact_email" name="creative_contact_email" type="email">
+          </div>
+          <div class="card__form-field t-and-c">
+            <input id="t-and-c" name="t_and_c" type="checkbox">
+            <div>{{ tAndC }}</div>
+          </div>
+        </div>
+        <div class="card__footer">
+          {{ prev_button() }}
+          {{ current_total() }}
+          <button class="new-subscription__submit cta-btn cta-btn--regular cta-btn--primary disabled">
+            Order Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

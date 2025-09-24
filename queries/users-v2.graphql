@@ -1,0 +1,23 @@
+# $activeCompany: "{{ contact.active_company || contact.associatedcompanyid }}"
+query MyQuery($activeCompany: String!) {
+  CRM {
+    company(uniqueIdentifier: "hs_object_id", uniqueIdentifierValue: $activeCompany) {
+      name
+      hs_object_id
+      associations {
+        contact_collection__company_to_contact_unlabeled(
+          limit: 500
+          orderBy: lastname__asc
+        ) {
+          items {
+            firstname
+            lastname
+            email
+            phone
+            hs_avatar_filemanager_key
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,557 @@
+[ {
+  "id" : "intro_content",
+  "name" : "intro_content",
+  "label" : "Intro Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h1>Let’s get your property signed up.</h1><p>Don’t worry. If you can’t get through everything in one sitting you can save your progress and pick up where you left off.</p>"
+}, {
+  "picker" : "file",
+  "id" : "intro_video",
+  "name" : "intro_video",
+  "label" : "Intro Video",
+  "required" : false,
+  "locked" : false,
+  "type" : "file",
+  "display_width" : null,
+  "default" : "https://7954923.fs1.hubspotusercontent-na1.net/hubfs/7954923/Apartment%20Explainer%20Video.mp4"
+}, {
+  "id" : "location_info",
+  "name" : "location_info",
+  "label" : "Location Info",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h6>Did you know?</h6><p class=\"small\">Helpful content can go here to better guide the user through the onboarding process.</p>"
+}, {
+  "id" : "product_cards",
+  "name" : "product_cards",
+  "label" : "Product Cards",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 4
+  },
+  "children" : [ {
+    "id" : "product_cards.main_product",
+    "name" : "main_product",
+    "label" : "Product",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.setup_fee",
+    "name" : "setup_fee",
+    "label" : "Setup Fee (Optional)",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.legacy_main_product",
+    "name" : "legacy_main_product",
+    "label" : "Legacy Product",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.legacy_setup_fee",
+    "name" : "legacy_setup_fee",
+    "label" : "Legacy Setup Fee (Optional)",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.default_add_on_groups",
+    "name" : "default_add_on_groups",
+    "label" : "Default Add-on Groups",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "product_cards.default_add_on_groups.group_title",
+      "name" : "group_title",
+      "label" : "Group Title",
+      "inline_help_text" : "This title is for reference only and will not be displayed to the user.",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "Banner Ads"
+    }, {
+      "id" : "product_cards.default_add_on_groups.add_on_products",
+      "name" : "add_on_products",
+      "label" : "Add-on Products",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "children" : [ {
+        "id" : "product_cards.default_add_on_groups.add_on_products.product",
+        "name" : "product",
+        "label" : "Product",
+        "required" : false,
+        "locked" : false,
+        "object_type" : "PRODUCT",
+        "type" : "crmobject",
+        "display_width" : null
+      }, {
+        "id" : "product_cards.default_add_on_groups.add_on_products.setup_fee",
+        "name" : "setup_fee",
+        "label" : "Setup Fee (Optional)",
+        "required" : false,
+        "locked" : false,
+        "object_type" : "PRODUCT",
+        "type" : "crmobject",
+        "display_width" : null
+      }, {
+        "id" : "product_cards.default_add_on_groups.add_on_products.select_by_default",
+        "name" : "select_by_default",
+        "label" : "Select By Default",
+        "inline_help_text" : "Only check this for one product in the group.",
+        "required" : false,
+        "locked" : false,
+        "display" : "checkbox",
+        "type" : "boolean",
+        "display_width" : null,
+        "default" : false
+      } ],
+      "tab" : "CONTENT",
+      "expanded" : false,
+      "group_occurrence_meta" : null,
+      "type" : "group",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : [ {
+    "main_product" : {
+      "id" : 2202519366
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202495025
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202534499
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202535497
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  } ]
+}, {
+  "id" : "default_add_ons",
+  "name" : "default_add_ons",
+  "label" : "Default Add-ons Table",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "default_add_ons.table_title",
+    "name" : "table_title",
+    "label" : "Table Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null
+  }, {
+    "id" : "default_add_ons.table_description",
+    "name" : "table_description",
+    "label" : "Table Description",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "default_add_ons.display_columns",
+    "name" : "display_columns",
+    "label" : "Display Columns",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "choices" : [ [ "package", "Package" ], [ "cost", "Price" ], [ "deliverables", "Deliverables" ], [ "services-included", "Services Included" ] ],
+    "multiple" : true,
+    "reordering_enabled" : false,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : [ "package", "cost", "deliverables", "services-included" ]
+  }, {
+    "id" : "default_add_ons.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "default_add_ons.products.product",
+      "name" : "product",
+      "label" : "Product",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+}, {
+  "id" : "add_on_tables",
+  "name" : "add_on_tables",
+  "label" : "Add-on Tables",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 3
+  },
+  "children" : [ {
+    "id" : "add_on_tables.table_title",
+    "name" : "table_title",
+    "label" : "Table Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Banner Ad Design"
+  }, {
+    "id" : "add_on_tables.table_description",
+    "name" : "table_description",
+    "label" : "Table Description",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "add_on_tables.conditional_display_settings",
+    "name" : "conditional_display_settings",
+    "label" : "Conditional Display Settings",
+    "required" : false,
+    "locked" : false,
+    "children" : [ {
+      "id" : "add_on_tables.conditional_display_settings.display_logic",
+      "name" : "display_logic",
+      "label" : "Display Logic",
+      "required" : false,
+      "locked" : false,
+      "display" : "radio",
+      "choices" : [ [ "none", "Do not use display logic" ], [ "products-selected", "Display if any products are selected" ], [ "products-not-selected", "Display if all products are not selected" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "type" : "choice",
+      "display_width" : null,
+      "default" : "none"
+    }, {
+      "id" : "add_on_tables.conditional_display_settings.display_products",
+      "name" : "display_products",
+      "label" : "Display Products",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "object_type" : "PRODUCT",
+      "properties_to_fetch" : [ "hs_sku", "name" ],
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  }, {
+    "id" : "add_on_tables.conditional_messages",
+    "name" : "conditional_messages",
+    "label" : "Conditional Messages",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "add_on_tables.conditional_messages.message",
+      "name" : "message",
+      "label" : "Message",
+      "required" : false,
+      "locked" : false,
+      "type" : "richtext",
+      "display_width" : null
+    }, {
+      "id" : "add_on_tables.conditional_messages.icon",
+      "name" : "icon",
+      "label" : "Icon",
+      "inline_help_text" : "<a href=\"https://fonts.google.com/icons?icon.style=Rounded\">Select a Google icon here</a>",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null
+    }, {
+      "id" : "add_on_tables.conditional_messages.message_color",
+      "name" : "message_color",
+      "label" : "Message Color",
+      "required" : false,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "positive", "Positive" ], [ "negative", "Negative" ], [ "info", "Info" ], [ "warning", "Warning" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "type" : "choice",
+      "display_width" : null,
+      "default" : "info"
+    }, {
+      "id" : "add_on_tables.conditional_messages.display_logic",
+      "name" : "display_logic",
+      "label" : "Display Logic",
+      "required" : false,
+      "locked" : false,
+      "display" : "radio",
+      "choices" : [ [ "none", "Do not use display logic" ], [ "products-selected", "Display if any products are selected" ], [ "products-not-selected", "Display if all products are not selected" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "type" : "choice",
+      "display_width" : null,
+      "default" : "none"
+    }, {
+      "id" : "add_on_tables.conditional_messages.display_products",
+      "name" : "display_products",
+      "label" : "Display Products",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "object_type" : "PRODUCT",
+      "properties_to_fetch" : [ "hs_sku", "name" ],
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  }, {
+    "id" : "add_on_tables.enable_conditional_logic",
+    "name" : "enable_conditional_logic",
+    "label" : "Enable Conditional Logic",
+    "required" : false,
+    "locked" : false,
+    "display" : "toggle",
+    "type" : "boolean",
+    "display_width" : null,
+    "default" : true
+  }, {
+    "id" : "add_on_tables.conditional_logic_title",
+    "name" : "conditional_logic_title",
+    "label" : "Conditional Logic Title",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Do you need design services?"
+  }, {
+    "id" : "add_on_tables.conditional_logic_decline_info_label",
+    "name" : "conditional_logic_decline_info_label",
+    "label" : "Conditional Logic Decline Info Label",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Artwork Upload"
+  }, {
+    "id" : "add_on_tables.conditional_logic_decline_info_description",
+    "name" : "conditional_logic_decline_info_description",
+    "label" : "Conditional Logic Decline Info Description",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "You’ll be able to upload your artwork during Subscription setup"
+  }, {
+    "id" : "add_on_tables.display_columns",
+    "name" : "display_columns",
+    "label" : "Display Columns",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "choices" : [ [ "package", "Package" ], [ "cost", "Price" ], [ "deliverables", "Deliverables" ], [ "services-included", "Services Included" ] ],
+    "multiple" : true,
+    "reordering_enabled" : false,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : [ "package", "cost", "deliverables", "services-included" ]
+  }, {
+    "id" : "add_on_tables.pre_select_first_product_",
+    "name" : "pre_select_first_product_",
+    "label" : "Pre-Select First Product?",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "type" : "boolean",
+    "display_width" : null,
+    "default" : true
+  }, {
+    "id" : "add_on_tables.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 1
+    },
+    "children" : [ {
+      "id" : "add_on_tables.products.product",
+      "name" : "product",
+      "label" : "Product",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    }, {
+      "id" : "add_on_tables.products.setup_fee",
+      "name" : "setup_fee",
+      "label" : "Setup Fee",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+}, {
+  "id" : "summary_info",
+  "name" : "summary_info",
+  "label" : "Summary Info",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null
+}, {
+  "id" : "terms_and_conditions",
+  "name" : "terms_and_conditions",
+  "label" : "Terms and Conditions",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<p>I agree to the terms and conditions.</p>"
+} ]

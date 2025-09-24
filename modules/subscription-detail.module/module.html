@@ -1,0 +1,644 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  location_modal,
+  subscription_table,
+  modal,
+%}
+
+{# Module-specific options #}
+{% set location = crm_associations(dynamic_page_crm_object.id, 'USER_DEFINED', 32, '', 'property_name,property_address,property_address_2,property_city,property_state,property_zip_code').results|first %}
+{% set deal = crm_associations(dynamic_page_crm_object.id, 'HUBSPOT_DEFINED', 28).results|first %}
+{% set lineItems = crm_associations(deal.id, 'HUBSPOT_DEFINED', 19, '', 'name,price,short_label,geofence_limit,intelligence_report_selections_limit,hs_sku,geofencing_tabs').results %}
+{% set geofencingIntroText = module.geofencing_settings.geofencing_intro_text %}
+{% set mapIntroText = module.geofencing_settings.map_intro_text %}
+{% set csvIntroText = module.geofencing_settings.csv_intro_text %}
+{% set cfmIntroText = module.geofencing_settings.cfm_intro_text %}
+{% set cfmCheckboxLabel = module.geofencing_settings.cfm_checkbox_label %}
+{% set intelligenceReportLabel = module.intelligence_report_settings.intelligence_report_label %}
+{% set intelligenceReportIntroText = module.intelligence_report_settings.intelligence_report_intro_text %}
+{% set intelligenceReportManualIntroText = module.intelligence_report_settings.manual_competitor_entry_intro_text %}
+{% set intelligenceReportBackupIntroText = module.intelligence_report_settings.manual_competitor_entry_backup_intro_text %}
+{% set sections = module.sections %}
+{% set approvalSections = module.approval_sections %}
+{% set deliverableStatusMessages = module.deliverable_status_messages %}
+{% set deliverables = module.data_query.data.CRM.ticket.associations.p_deliverables_collection__deliverables_to_ticket.items %}
+
+{% set products = {
+  package: null,
+  addOns: [],
+  all: []
+} %}
+
+{% for lineItem in lineItems %}
+  {% set lineItemName = lineItem.name|lower|replace(' ', '-')|replace('_', '-') %}
+  {% if lineItemName is string_containing 'package' %}
+    {% do products.update({'package': lineItem}) %}
+  {% elif lineItemName is not string_containing 'set-up' && lineItemName is not string_containing 'setup' %}
+    {% do products.addOns.append(lineItem) %}
+  {% endif %}
+  {% do products.all.append(lineItem) %}
+{% endfor %}
+
+{% set intelligenceReportStatus = {'paid': false} %}
+{% for item in products.all %}
+  {% set itemName = (item.name or '')|lower %}
+  {% set itemLabel = (item.short_label or '')|lower %}
+  {% set isIntelligenceLineItem = itemName is string_containing 'intelligence report' or itemLabel is string_containing 'intelligence report' %}
+  {% if isIntelligenceLineItem and item.price|default(0)|float > 0 %}
+    {% do intelligenceReportStatus.update({'paid': true}) %}
+  {% endif %}
+{% endfor %}
+{% set hasPaidIntelligenceReport = intelligenceReportStatus.paid %}
+{% set packageAllowsIntelligenceReport = products.package and products.package.intelligence_report_selections_limit|int > 0 %}
+{% set showIntelligenceReport = packageAllowsIntelligenceReport and !dynamic_page_crm_object.intelligence_report_disabled and hasPaidIntelligenceReport %}
+
+{% set visibleSections = [] %}
+{% for section in sections %}
+  {% set productVisible = {
+    found: false
+  } %}
+
+  {% for allProduct in products.all %}
+    {% for sectionProduct in section.products %}
+      {% if allProduct.hs_sku == sectionProduct.properties.hs_sku %}
+        {% do productVisible.update({found: true}) %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% if section.section_display == 'products-present' && productVisible.found || section.section_display == 'products-not-present' && !productVisible.found %}
+    {% do visibleSections.append(section) %}
+  {% endif %}
+{% endfor %}
+
+{# Macros #}
+{% macro expander(expanderId, expanderLabel, completedProperty, infoTitle, infoDescription, tooltip, required=true) %}
+  {% set isComplete = completedProperty and dynamic_page_crm_object[completedProperty] %}
+  <div id="{{ expanderId }}"
+       class="expander card{% if isComplete %} complete{% endif %}"
+       {% if required and completedProperty %}data-collectedproperty="{{ completedProperty }}"{% endif %}>
+    <button class="expander__trigger card__header">
+      <span class="expander__trigger-icon"></span>
+      <h4 class="expander__trigger-headline">{{ expanderLabel }}</h4>
+      <span class="expander__trigger-expand-icon material-symbols-rounded">expand_more</span>
+    </button>
+    <div class="expander__body card__body{% if infoTitle && infoDescription %} card__body--info{% endif %}">
+      <div>
+        {{ caller() }}
+      </div>
+      {% if infoTitle && infoDescription %}
+        <div class="card card--padded card--info">
+          <h6>{{ infoTitle }}</h6>
+          <p class="small">{{ infoDescription }}</p>
+        </div>
+      {% endif %}
+    </div>
+    <div class="expander__footer card__footer">
+      <button class="cta-btn cta-btn--regular cta-btn--gray save-progress">
+        <span class="material-symbols-rounded">save</span>
+        Save Progress
+      </button>
+      <button class="cta-btn cta-btn--regular cta-btn--primary submit{% if tooltip %} tooltip{% endif %}"{% if tooltip %} data-tooltip="{{ tooltip }}"{% endif %}>Submit</button>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro approval_section(category, sectionLabel, categoryDeliverables) %}
+  {% if categoryDeliverables|length > 0 %}
+    <div class="approval-section">
+    <h3>{% if sectionLabel %}{{ sectionLabel }}{% else %}{{ category }}{% endif %}</h3>
+      <table class="approval-table">
+        <thead class="approval-table__header">
+          <th class="approval-table__th">Asset</th>
+          <th class="approval-table__th">Status</th>
+          <th class="approval-table__th">Detail</th>
+          <th class="approval-table__th">Last Updated</th>
+          <th class="approval-table__th">View</th>
+          {% if category != 'Intelligence Report' %}
+            <th class="approval-table__th"></th>
+          {% endif %}
+        </thead>
+        <tbody class="approval-table__body">
+          {% for deliverable in categoryDeliverables %}
+            {% set deliverableStatus = deliverable.status.label|lower %}
+            {% if deliverable.status.label == 'Ready for Review'  || deliverable.status.label == '' || !deliverable.status.label %}
+              {% set deliverableStatus = 'ready' %}
+            {% endif %}
+            <tr class="approval-table__row {{ deliverableStatus }}" data-deliverable="{{ deliverable.hs_object_id }}">
+              <td class="approval-table__td">{{ deliverable.deliverable_name }}</td>
+              {% if category == 'Intelligence Report' %}
+                <td class="approval-table__td approval-table__td--completed">
+                  <span class="material-symbols-rounded">check_circle</span> Completed
+                </td>
+              {% else %}
+                <td class="approval-table__td approval-table__td--{{ deliverableStatus }}">
+                  {% if deliverableStatus == 'approved' %}
+                    <span class="material-symbols-rounded">check_circle</span> Approved
+                  {% elif deliverableStatus == 'rejected' %}
+                    <span class="material-symbols-rounded">dangerous</span> Rejected
+                  {% else %}
+                    <span class="material-symbols-rounded">warning</span> Pending Approval
+                  {% endif %}
+                </td>
+              {% endif %}
+              <td class="approval-table__td">{{ deliverable.notes_for_client }}</td>
+              <td class="approval-table__td">{{ deliverable.hs_lastmodifieddate|format_datetime('short', local_time_zone) }}</td>
+              <td class="approval-table__td">
+                <a class="approval-table__link" href="{{ deliverable.deliverable_file_link }}" target="_blank" rel="noopener noreferrer">
+                  <span class="material-symbols-rounded">visibility</span>
+                </a>
+              </td>
+              {% if category != 'Intelligence Report' %}
+                <td class="approval-table__td approval-table__td--buttons">
+                  {% if category == 'Retargeting Pixels' && deliverableStatus != 'approved' %}
+                    <div class="approval-table__buttons">
+                      <button class="cta-btn cta-btn--xsmall cta-btn--primary modal-trigger" data-modal="{{ deliverable.hs_object_id ~ '-modal' }}">Complete</button>
+                    </div>
+                  {% elif deliverableStatus != 'approved' && deliverableStatus != 'rejected' %}
+                    <div class="approval-table__buttons">
+                      <button class="cta-btn cta-btn--xsmall cta-btn--gray modal-trigger" data-modal="{{ deliverable.hs_object_id ~ '-reject-modal' }}">Reject</button>
+                      <button class="cta-btn cta-btn--xsmall cta-btn--primary modal-trigger" data-modal="{{ deliverable.hs_object_id ~ '-modal' }}">Approve</button>
+                    </div>
+                  {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{# Markup #}
+<div id="subscription-meta" data-ticketid="{{ dynamic_page_crm_object.id }}" data-intelligencelimit="{{ products.package.intelligence_report_selections_limit }}"></div>
+<div class="module module--bg-white subscription-detail__header">
+  <div class="constrain">
+    <a id="back-to-location" class="cta-link" href="/locations/{{ location.id }}"><span class="material-symbols-rounded">chevron_left</span>Back</a>
+    <div class="subscription-detail__header-inner module__header module__header--button-center">
+      <h1 id="subscription-name" class="h2">{{ dynamic_page_crm_object.subject }}</h1>
+      <div class="subscription-detail__progress"></div>
+      <a class="subscription-detail__add-user cta-btn cta-btn--small cta-btn--secondary-outline" href="/user-management">
+        <span class="material-symbols-rounded">person_add</span>
+        Invite Team Member
+      </a>
+    </div>
+    <div class="subscription-detail__header-grid">
+      <div class="subscription-detail__header-column">
+        <div>
+          <p class="xsmall mb0">{{ locationType }}</p>
+          <span class="h5 mb0">{{ location.property_name }}</span>
+          <div id="location-address" data-address="{{ location.property_address }}, {{ location.property_city }}, {{ location.property_state }} {{ location.property_zip_code }}"></div>
+          <p>
+            {{ location.property_address }},
+            {% if location.property_address_2 %}{{ location.property_address_2 }},{% endif %}
+            {{ location.property_city }}, {{ location.property_state }} {{ location.property_zip_code }}
+          </p>
+        </div>
+      </div>
+      <div class="subscription-detail__header-column module--bg-light">
+        <div>
+          <p class="xsmall mb0">Package</p>
+          <p class="h5">
+            {{ products.package.short_label }}
+            ({{ products.package.price }}/mo)
+          </p>
+          {% if products.addOns|length > 0 %}
+            <p class="xsmall mb0">Add-ons</p>
+            <p>
+              {# {{ products.addOns }} #}
+              {% for addOn in products.addOns %}
+                {{ addOn.name }}
+                ({{ addOn.price }}/mo){% if !loop.last %},{% endif %}
+              {% endfor %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="display: none;">{{ products.all }}</div>
+<div class="subscription-detail__sticky-container">
+  {% if dynamic_page_crm_object.hs_pipeline_stage == 97846820 || dynamic_page_crm_object.hs_pipeline_stage == 123088444 %}
+    <div class="module module--bg-white subscription-detail__anchor-menu">
+      <div class="constrain">
+        <div class="anchor-menu">
+          <button class="anchor-link active" data-target="#geofencing-targets">
+            <span class="material-symbols-rounded">add_location</span>
+    {% endif %}
+            Geofencing Targets
+            <span class="geofencing-targets"><span class="geofencing-targets__current geofence-targets-current">{{ dynamic_page_crm_object.geofence_total_selected || 0 }}</span>/<span class="geofencing-targets__total">{% if products.package.geofence_limit == 0 %}Unlimited{% else %}{{ products.package.geofence_limit }}{% endif %}</span></span>
+          </button>
+  
+          {% for section in visibleSections %}
+            {% set sectionId = section.section_title|lower|replace(' ', '')|replace(':', '-')|replace('(', '')|replace(')', '') %}
+            <button class="anchor-link" data-target="#{{ sectionId }}" data-test="{{ section.products|tojson|escape_html }}">
+              {{ section.section_icon }}
+              {{ section.section_title }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="module subscription-detail__actions">
+      <div class="constrain">
+        {% set targetsTooltip = false %}
+        {% set targetsTooltipLimit = products.package.intelligence_report_selections_limit|int %}
+        {% if targetsTooltipLimit > 0 %}
+          {% set targetsTooltipLimit = targetsTooltipLimit + 1 %}
+          {% set targetsTooltip = 'Set at least ' ~ targetsTooltipLimit ~ ' selections as competitors for use in the GeofenceiQ™ Initial Report' %}
+        {% endif %}
+
+        {% call expander('geofencing-targets', 'Geofencing Targets', 'geofencing_complete', false, false, targetsTooltip) %}
+          {% if geofencingIntroText %}
+            <div class="subscription-detail__geofence-intro">
+              {{ geofencingIntroText }}
+            </div>
+          {% endif %}
+          {% set selectedTab = dynamic_page_crm_object.geofence_selection_type %}
+          {% if !selectedTab %}
+            {% set selectedTab = 'map-panel' %}
+          {% endif %}
+          {% set packageLower = products.package.name|lower %}
+          <div class="tabs">
+            {% if products.package.geofencing_tabs %}
+              {% if 'Choose on map' in products.package.geofencing_tabs %}
+                <button class="tab{% if selectedTab == 'map-panel' || !selectedTab %} active{% elif selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="map-panel">Choose on map</button>
+              {% endif %}
+              {% if 'Upload CSV' in products.package.geofencing_tabs %}
+                <button class="tab{% if selectedTab == 'csv-panel' %} active{% elif selectedTab && selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="csv-panel">Upload CSV</button>
+              {% endif %}
+              {% if 'Choose for me' in products.package.geofencing_tabs %}
+                <button class="tab{% if selectedTab == 'cfm-panel' %} active{% elif selectedTab && selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="cfm-panel">Choose for me</button>
+              {% endif %}
+            {% else %}
+              {# Hard-coded backup for existing tickets (line items don't include geofencing_tabs property) #}
+              <button class="tab{% if selectedTab == 'map-panel' || !selectedTab %} active{% elif selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="map-panel">Choose on map</button>
+              <button class="tab{% if selectedTab == 'csv-panel' %} active{% elif selectedTab && selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="csv-panel">Upload CSV</button>
+              {% if packageLower is not string_containing 'saver' || selectedTab == 'cfm-panel' %}
+                <button class="tab{% if selectedTab == 'cfm-panel' %} active{% elif selectedTab && selectedTab != 'map-panel' %} disabled{% endif %}" data-panel="cfm-panel">Choose for me</button>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="tab-panels">
+            <div id="map-panel" class="tab-panel{% if selectedTab == 'map-panel' || !selectedTab %} active{% endif %}">
+              {% if mapIntroText %}
+                <div class="subscription-detail__geofence-intro">
+                  {{ mapIntroText }}
+                </div>
+              {% endif %}
+              <div id="map-container">
+                <form id="map-search" class="subscription-detail__geofence-search">
+                  <input id="geofence-search" type="search" placeholder="Search for a competitor or point of interest">
+                  <button id="geofence-search-submit" class="subscription-detail__geofence-search-submit" type="submit">
+                    <span class="material-symbols-rounded">search</span>
+                  </button>
+                </form>
+                <div class="subscription-detail__geofence-map">
+                  <div class="subscription-detail__geofence-map-results"></div>
+                  <div id="geofence-map" class="subscription-detail__geofence-map-inner" data-geofencelimit="{{ products.package.geofence_limit }}" data-locations="{{ dynamic_page_crm_object.geofence_dev|escape }}" data-selected-tab="{{ selectedTab }}"></div>
+                  {# <button class="subscription-detail__geofence-map-fullscreen-trigger">
+                    <span class="material-symbols-rounded">fullscreen</span>
+                  </button> #}
+                </div>
+              </div>
+              <div class="subscription-detail__geofence-selected-targets">
+                <h3 class="mb0">Selected Targets</h3>
+                <span class="subscription-detail__geofence-selected-targets-count">
+                  <span class="geofence-targets-current">{{ dynamic_page_crm_object.geofence_total_selected || 0 }}</span>/<span>{% if products.package.geofence_limit == 0 %}Unlimited{% else %}{{ products.package.geofence_limit }}{% endif %}</span>
+                </span>
+                {% if products.package.intelligence_report_selections_limit|int > 0 %}
+                  <p class="mb0 w-full">{{ targetsTooltip }}</p>
+                {% endif %}
+              </div>
+              <div class="subscription-detail__geofence-targets-table">
+                <div class="targets-table">
+                  <div class="targets-table__header">
+                    <div class="targets-table__th">Name</div>
+                    <div class="targets-table__th">Location</div>
+                    <div class="targets-table__th">Type</div>
+                    <div class="targets-table__th"></div>
+                  </div>
+                  <div class="targets-table__body">
+                    {# <div class="targets-table__row">
+                      <div class="targets-table__td">Sample Location Name</div>
+                      <div class="targets-table__td">City, ST</div>
+                      <div class="targets-table__td"><input type="text"></div>
+                      <div class="targets-table__td">
+                        <span class="material-symbols-rounded">delete</span>
+                      </div>
+                    </div> #}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="csv-panel" class="tab-panel{% if selectedTab == 'csv-panel' %} active{% endif %}">
+              {% if csvIntroText %}
+                <div class="subscription-detail__geofence-intro">
+                  {{ csvIntroText }}
+                </div>
+              {% endif %}
+              <div class="file-list" data-files="{{ dynamic_page_crm_object.geofence_csv|escape }}"></div>
+              <input id="geofence_csv" name="geofence_csv" type="file" accept=".csv,text/csv">
+            </div>
+            <div id="cfm-panel" class="tab-panel{% if selectedTab == 'cfm-panel' %} active{% endif %}">
+              {% if cfmIntroText %}
+                <div class="subscription-detail__geofence-intro">
+                  {{ cfmIntroText }}
+                </div>
+              {% endif %}
+              <label class="hs-form-booleancheckbox-display" for="geofence_help_me_choose_targets">
+              <input id="geofence_help_me_choose_targets" name="geofence_help_me_choose_targets" type="checkbox"{% if dynamic_page_crm_object.geofence_help_me_choose_targets %} checked{% endif %}>
+                <span>{{ cfmCheckboxLabel }}</span>
+              </label>
+            </div>
+          </div>
+        {% endcall %}
+        {% if showIntelligenceReport %}
+          <div id="intelligence-report-available"></div>
+          {% call expander('intelligence-report', intelligenceReportLabel, 'intelligence_report_collected', none, none, none, false) %}
+            {% if dynamic_page_crm_object.geofence_selection_type != 'map-panel' %}
+              <div class="subscription-detail__intelligence-content">
+                <div class="subscription-detail__intelligence-headline">
+                  {{ intelligenceReportManualIntroText }}
+                </div>
+              </div>
+              <div class="subscription-detail__intelligence-table">
+                <div class="intelligence-table">
+                  <div class="intelligence-table__header">
+                    <div class="intelligence-table__th intelligence-table__th--checkbox"></div>
+                    <div class="intelligence-table__th">Name</div>
+                    <div class="intelligence-table__th">Address</div>
+                  </div>
+                  <div class="intelligence-table__body intelligence-table__body--primary"></div>
+                </div>
+              </div>
+              <br>
+              <br>
+              <div class="subscription-detail__intelligence-content">
+                <div class="subscription-detail__intelligence-headline">
+                  {{ intelligenceReportBackupIntroText }}
+                </div>
+              </div>
+              <div class="subscription-detail__intelligence-table">
+                <div class="intelligence-table">
+                  <div class="intelligence-table__header">
+                    <div class="intelligence-table__th intelligence-table__th--checkbox"></div>
+                    <div class="intelligence-table__th">Name</div>
+                    <div class="intelligence-table__th">Address</div>
+                  </div>
+                  <div class="intelligence-table__body intelligence-table__body--backup"></div>
+                </div>
+              </div>
+            {% else %}
+              <div class="subscription-detail__intelligence-content">
+                <div class="subscription-detail__intelligence-headline">
+                  {{ intelligenceReportIntroText }}
+                </div>
+              </div>
+              <div class="subscription-detail__intelligence-table">
+                <div class="intelligence-table">
+                  <div class="intelligence-table__header">
+                    <div class="intelligence-table__th">Name</div>
+                    <div class="intelligence-table__th">Location</div>
+                    <div class="intelligence-table__th intelligence-table__th--checkbox">Include</div>
+                    <div class="intelligence-table__th intelligence-table__th--checkbox">Backup</div>
+                  </div>
+                  <div class="intelligence-table__body intelligence-table__body--map-panel"></div>
+                </div>
+              </div>
+            {% endif %}
+          {% endcall %}
+        {% endif %}
+
+        {% for section in visibleSections %}
+          {% set sectionId = section.section_title|lower|replace(' ', '')|replace(':', '-')|replace('(', '')|replace(')', '') %}
+
+          {% set visibleFields = [] %}
+          {% for field in section.fields %}
+            {% if field.enable_conditional_display_options %}
+              {% set fieldVisible = {
+                found: false
+              } %}
+              {% for allProduct in products.all %}
+                {% for fieldProduct in field.products %}
+                  {% if allProduct.hs_sku == fieldProduct.properties.hs_sku %}
+                    {% do fieldVisible.update({found: true}) %}
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+  
+              {% if field.field_display == 'products-present' && fieldVisible.found || field.field_display == 'products-not-present' && !fieldVisible.found %}
+                {% do visibleFields.append(field) %}
+              {% endif %}
+            {% else %}
+              {% do visibleFields.append(field) %}
+            {% endif %}
+          {% endfor %}
+
+          {% call expander(sectionId, section.section_title, section.section_completed_property, section.section_help_text_title, section.section_help_text) %}
+            {% for field in visibleFields %}
+              <div class="expander__field expander__field--{{ field.field_type }}"{% if field.field_type == 'skip-section' %} data-is-skip="true"{% elif field.mark_as_required %} data-required="true"{% endif %}>
+                {% if field.field_type == 'file' %}
+                  <h3>{{ field.field_title }}{% if field.mark_as_required %}*{% endif %}</h3>
+                {% elif field.field_type != 'video-options' %}
+                  <h6>{{ field.field_title }}{% if field.mark_as_required %}*{% endif %}</h6>
+                {% endif %}
+                {% if field.field_type == 'radio' %}
+                  <div class="card__input-group">
+                    {% for radio in field.radio_options %}
+                      <label class="hs-form-radio-display">
+                        <input name="{{ field.ticket_property_name }}" type="{{ field.field_type }}" value="{{ radio }}"{% if dynamic_page_crm_object[field.ticket_property_name] == radio %} checked{% elif !dynamic_page_crm_object[field.ticket_property_name] && loop.first %} checked{% endif %}>
+                        <span>{{ radio }}</span>
+                      </label>
+                    {% endfor %}
+                  </div>
+                {% elif field.field_type == 'textarea' %}
+                  <textarea name="{{ field.ticket_property_name }}" rows="4">{{ dynamic_page_crm_object[field.ticket_property_name]|escape }}</textarea>
+                {% elif field.field_type == 'text' %}
+                  <input name="{{ field.ticket_property_name }}" type="text" value="{{ dynamic_page_crm_object[field.ticket_property_name]|escape }}">
+                {% elif field.field_type == 'file' %}
+                  <div class="file-list" data-files="{{ dynamic_page_crm_object[field.ticket_property_name]|escape }}"></div>
+                  <label class="file-label" for="{{ field.ticket_property_name }}">Upload {{ field.field_title }}</label>
+                  <input class="file-input" id="{{ field.ticket_property_name }}" name="{{ field.ticket_property_name }}" data-title="{{ field.field_title|replace(':', '')|replace('/', '')|replace('\\', '')|replace('&', '')|replace('\'', '')|replace('\"', '') }}" type="file" multiple>
+                  {% if field.file_share_link_property_name %}
+                    <label for="{{ field.file_share_link_property_name }}">Or provide a share link to your {{ field.field_title }}:</label>
+                    <input id="{{ field.file_share_link_property_name }}" name="{{ field.file_share_link_property_name }}" type="text" value="{{ dynamic_page_crm_object[field.file_share_link_property_name]|escape }}">
+                  {% endif %}
+                {% elif field.field_type == 'skip-section' %}
+                  <label class="hs-form-booleancheckbox-display" for="{{ field.ticket_property_name }}">
+                  <input id="{{ field.ticket_property_name }}" data-skip="true" name="{{ field.ticket_property_name }}" type="checkbox"{% if dynamic_page_crm_object[field.ticket_property_name] == true %} checked{% endif %}>
+                    <span>{{ field.skip_label }}</span>
+                  </label>
+                {% elif field.field_type == 'video-options' %}
+                  <div class="card__input-group card__input-group--space-between">
+                    <div>
+                      <h6>{{ field.field_title }} Length{% if field.mark_as_required %}*{% endif %}</h6>
+                      <div class="card__input-group">
+                        {% for duration in field.video_durations %}
+                          <label class="hs-form-radio-display">
+                          <input name="{{ field.video_length_ticket_property_name }}" type="radio" value="{{ duration.duration }}"{% if dynamic_page_crm_object[field.video_length_ticket_property_name] == duration.duration || !dynamic_page_crm_object[field.video_length_ticket_property_name] && duration.duration == '15s' %} checked{% endif %} data-orientations="{{ duration.applicable_orientations|tojson|escape_html }}">
+                            <span>{{ duration.duration }}</span>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <div>
+                      <h6>{{ field.field_title }} Orientation{% if field.mark_as_required %}*{% endif %}</h6>
+                      {% set orientations = ['Landscape', 'Portrait'] %}
+                      <div class="card__input-group">
+                        {% for orientation in orientations %}
+                          {% set durations = field.video_durations|selectattr('duration') %}
+                          {% set applicableDurations = [] %}
+                          {% for duration in durations %}
+                            {% if duration.applicable_orientations is containing orientation|lower %}
+                              {% do applicableDurations.append(duration.duration) %}
+                            {% endif %}
+                          {% endfor %}
+                          <label class="hs-form-radio-display">
+                            <input name="{{ field.video_orientation_ticket_property_name }}" type="radio" value="{{ orientation }}"{% if dynamic_page_crm_object[field.video_orientation_ticket_property_name] == orientation || !dynamic_page_crm_object[field.video_orientation_ticket_property_name] && orientation == 'Landscape' %} checked{% endif %} data-durations="{{ applicableDurations|tojson|escape_html }}">
+                            <span>{{ orientation }}</span>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <input name="{{ field.ticket_property_name }}" type="{{ field.field_type }}">
+                {% endif %}
+                {{ field.field_help_text }}
+                {% if field.field_type == 'file' %}
+                  {% set usageChoices = field.file_usage_choices %}
+                  {% set finalUsageChoices = [] %}
+                  {% for usageChoice in usageChoices %}
+                    {% for otherSection in visibleSections %}
+                      {% if otherSection.section_title == usageChoice %}
+                        {% do finalUsageChoices.append(usageChoice) %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}  
+                  <div class="file-table-wrapper" data-files="{{ dynamic_page_crm_object[field.ticket_property_name]|escape }}" data-usage="{{ finalUsageChoices|tojson|escape_html }}"></div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endcall %}
+          {% call modal(sectionId ~ '-modal', sectionId ~ '-modal-form', 'Are you sure?') %}
+            <p>You won't be able to change this after you submit.</p>
+          {% endcall %}
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="module subscription-detail__approvals">
+      <div class="constrain">
+        <div class="constrain--8">
+          {% if dynamic_page_crm_object.hs_pipeline_stage == 123121703 %} {# All Deliverables Approved #}
+            {{ deliverableStatusMessages.all_deliverables_approved }}
+          {% elif dynamic_page_crm_object.hs_pipeline_stage == 97846823 %} {# Ticket Closed #}
+            {{ deliverableStatusMessages.ticket_closed }}
+          {% elif dynamic_page_crm_object.hs_pipeline_stage == 123121702 %} {# Deliverables Rejected #}
+            {{ deliverableStatusMessages.deliverables_rejected }}
+          {% else %}
+            {{ deliverableStatusMessages.deliverables_pending_approval }} {# Deliverables Pending Approval #}
+          {% endif %}
+        </div>
+
+        {% for approvalSection in approvalSections %}
+          {% if approvalSection.deliverable_type != 'Other' %}
+            {% set categoryDeliverables = deliverables|selectattr('deliverable_type.label', 'eq', approvalSection.deliverable_type) %}
+            {{ approval_section(approvalSection.deliverable_type, approvalSection.title, categoryDeliverables) }}
+          {% endif %}
+          
+          {% if loop.last %}
+            {% set otherDeliverables = [] %}
+            {% for deliverable in deliverables %}
+              {% if deliverable.deliverable_type.label not in approvalSections|map('deliverable_type') %}
+                {% do otherDeliverables.append(deliverable) %}
+              {% endif %}
+            {% endfor %}
+            <div data-test="{{ otherDeliverables|tojson|escape }}"></div>
+            {{ approval_section('Other', 'Other', otherDeliverables) }}
+          {% endif %}
+        {% endfor %}
+
+        {% for deliverable in deliverables %}
+          {% set modalTitle = 'Confirm Approval' %}
+          {% if deliverable.deliverable_type.label == 'Retargeting Pixels' %}
+            {% set modalTitle = 'Confirm Installation' %}
+          {% endif %}
+          {% call modal(deliverable.hs_object_id ~ '-modal', deliverable.hs_object_id ~ '-modal-form', modalTitle, 'deliverable-form-approve') %}
+            {% if deliverable.deliverable_type.label == 'Retargeting Pixels' %}
+              <label for="{{ deliverable.hs_object_id ~ '-pixel'}}">
+                <input id="{{ deliverable.hs_object_id ~ '-pixel'}}" name="retargeting_pixel_installation" type="checkbox" value="true" required>
+                <span>This tracking pixel has been installed properly.</span>
+              </label>
+            {% else %}
+              <p>You are approving this asset.  Are you sure?</p>
+            {% endif %}
+          {% endcall %}
+          {% call modal(deliverable.hs_object_id ~ '-reject-modal', deliverable.hs_object_id ~ '-reject-modal-form', 'Confirm Rejection', 'deliverable-form-reject') %}
+            <label for="{{ deliverable.hs_object_id }}-reject-reason">What is the reason for rejecting this asset?</label>
+            <textarea id="{{ deliverable.hs_object_id }}-reject-reason" name="deliverable-reject-reason" rows="4" required></textarea>
+          {% endcall %}
+        {% endfor %}
+        {# Rejection alert #}
+        <div id="reject-alert" class="modal">
+          <div class="modal__bg modal__bg--alert"></div>
+          <div class="modal__inner reject-alert">
+            <div class="modal__header">
+              <h2 class="h4">Thank you for your feedback</h2>
+            </div>
+            <div class="modal__body">
+              <p>You will receive a new Approval Request email once your changes have been made. If we need more detail we will reach out via email.</p>
+            </div>
+            <div class="modal__footer">
+              <button class="modal__submit cta-btn cta-btn--medium cta-btn--primary" type="button">OK</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% if dynamic_page_crm_object.hs_pipeline_stage != 123088444 && dynamic_page_crm_object.hs_pipeline_stage != 123121702 && dynamic_page_crm_object.hs_pipeline_stage != 123121703 && dynamic_page_crm_object.hs_pipeline_stage != 97846823 && dynamic_page_crm_object.hs_pipeline_stage != 124877577 %}
+    {% if dynamic_page_crm_object.hs_pipeline_stage == 97846820 %}    {# new #}
+      {% set nextStage = 123088444 %}                                 {# submitted #}
+    {% elif dynamic_page_crm_object.hs_pipeline_stage == 123088444 %} {# submitted #}
+      {% set nextStage = 124877577 %}                                 {# in progress #}
+    {% elif dynamic_page_crm_object.hs_pipeline_stage == 123118630 %} {# waiting for approvals #}
+      {% set nextStage = 123121703 %}                                 {# approved #}
+    {% endif %}
+    <div class="constrain">
+      <div class="subscription-detail__submit-all">
+        <button id="submit-all" class="cta-btn cta-btn--large cta-btn--primary disabled" data-nextstage="{{ nextStage }}">I'm Finished!</button>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{# Modals #}
+{# Geofencing modal #}
+{% set geofenceModalTitle = '
+  <span class="targets-remaining active"><span class="targets-number"></span> Targets Remaining</span>
+  <span class="targets-complete targets-unlimited">Are you sure?</span>
+' %}
+{% call modal('geofencing-targets-modal', 'geofencing-targets-modal-form', geofenceModalTitle) %}
+  <div class="targets-remaining targets-unlimited active">
+    {% if products.package.intelligence_report_selections_limit|int > 0 %}
+      <p class="targets-remaining">You still have targets you can use. Would you like us to help pick the remaining targets for you?</p>
+      <p class="targets-unlimited">You have unlimited targets. Would you like us to help pick more targets for you?</p>
+      <label for="targets-help-me-choose">
+        <input id="targets-help-me-choose" type="checkbox" value="true">
+        <span class="targets-remaining">Yes, please choose the rest of my targets for me</span>
+        <span class="targets-unlimited">Yes, please choose more targets for me</span>
+      </label>
+    {% endif %}
+    {% else %}
+      <p class="targets-remaining">You still have targets you can use. You can save your progress and add more later, or check the box below to proceed with only your selected targets.</p>
+      <label for="targets-acknowledgement">
+        <input id="targets-acknowledgement" type="checkbox" value="true">
+        <span class="targets-remaining">I understand I can select {{ products.package.geofence_limit }} geofence targets. I would like to run my campaign using only the targets I have selected.</span>
+      </label>
+  </div>
+  <div class="targets-complete">
+    <p>You won't be able to change your geofencing targets after you submit.</p>
+  </div>
+{% endcall %}

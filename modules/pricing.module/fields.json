@@ -1,0 +1,334 @@
+[ {
+  "id" : "main_content",
+  "name" : "main_content",
+  "label" : "Main Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h1>Pricing</h1><p>Introductory paragraph provides additional context to the preceeding headline. Most intro paragraphs should be around two to three sentences in length to ensure skimmability.</p>"
+}, {
+  "id" : "product_cards",
+  "name" : "product_cards",
+  "label" : "Product Cards",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 4
+  },
+  "children" : [ {
+    "id" : "product_cards.main_product",
+    "name" : "main_product",
+    "label" : "Product",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.setup_fee",
+    "name" : "setup_fee",
+    "label" : "Setup Fee (Optional)",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.legacy_main_product",
+    "name" : "legacy_main_product",
+    "label" : "Legacy Product",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.legacy_setup_fee",
+    "name" : "legacy_setup_fee",
+    "label" : "Legacy Setup Fee (Optional)",
+    "required" : false,
+    "locked" : false,
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "product_cards.default_add_on_groups",
+    "name" : "default_add_on_groups",
+    "label" : "Default Add-on Groups",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "product_cards.default_add_on_groups.group_title",
+      "name" : "group_title",
+      "label" : "Group Title",
+      "inline_help_text" : "This title is for reference only and will not be displayed to the user.",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "Banner Ads"
+    }, {
+      "id" : "product_cards.default_add_on_groups.add_on_products",
+      "name" : "add_on_products",
+      "label" : "Add-on Products",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "children" : [ {
+        "id" : "product_cards.default_add_on_groups.add_on_products.product",
+        "name" : "product",
+        "label" : "Product",
+        "required" : false,
+        "locked" : false,
+        "object_type" : "PRODUCT",
+        "type" : "crmobject",
+        "display_width" : null
+      }, {
+        "id" : "product_cards.default_add_on_groups.add_on_products.setup_fee",
+        "name" : "setup_fee",
+        "label" : "Setup Fee (Optional)",
+        "required" : false,
+        "locked" : false,
+        "object_type" : "PRODUCT",
+        "type" : "crmobject",
+        "display_width" : null
+      }, {
+        "id" : "product_cards.default_add_on_groups.add_on_products.select_by_default",
+        "name" : "select_by_default",
+        "label" : "Select By Default",
+        "inline_help_text" : "Only check this for one product in the group.",
+        "required" : false,
+        "locked" : false,
+        "display" : "checkbox",
+        "type" : "boolean",
+        "display_width" : null,
+        "default" : false
+      } ],
+      "tab" : "CONTENT",
+      "expanded" : false,
+      "group_occurrence_meta" : null,
+      "type" : "group",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : [ {
+    "main_product" : {
+      "id" : 2202519366
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202495025
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202534499
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  }, {
+    "main_product" : {
+      "id" : 2202535497
+    },
+    "setup_fee" : {
+      "id" : null
+    }
+  } ]
+}, {
+  "id" : "default_add_ons",
+  "name" : "default_add_ons",
+  "label" : "Default Add-ons Table",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "default_add_ons.table_title",
+    "name" : "table_title",
+    "label" : "Table Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null
+  }, {
+    "id" : "default_add_ons.table_description",
+    "name" : "table_description",
+    "label" : "Table Description",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "default_add_ons.display_columns",
+    "name" : "display_columns",
+    "label" : "Display Columns",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "choices" : [ [ "package", "Package" ], [ "cost", "Price" ], [ "deliverables", "Deliverables" ], [ "services-included", "Services Included" ] ],
+    "multiple" : true,
+    "reordering_enabled" : false,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : [ "package", "cost", "deliverables", "services-included" ]
+  }, {
+    "id" : "default_add_ons.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "children" : [ {
+      "id" : "default_add_ons.products.product",
+      "name" : "product",
+      "label" : "Product",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+}, {
+  "id" : "add_on_content",
+  "name" : "add_on_content",
+  "label" : "Add-on Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h2 class=\"h1\">Add-ons</h2><p>Introductory paragraph provides additional context to the preceeding headline. Most intro paragraphs should be around two to three sentences in length to ensure skimmability.</p>"
+}, {
+  "id" : "add_on_tables",
+  "name" : "add_on_tables",
+  "label" : "Add-on Tables",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 1
+  },
+  "children" : [ {
+    "id" : "add_on_tables.table_title",
+    "name" : "table_title",
+    "label" : "Table Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Banner Ad Design"
+  }, {
+    "id" : "add_on_tables.table_description",
+    "name" : "table_description",
+    "label" : "Table Description",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "add_on_tables.display_columns",
+    "name" : "display_columns",
+    "label" : "Display Columns",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "choices" : [ [ "package", "Package" ], [ "cost", "Price" ], [ "deliverables", "Deliverables" ], [ "services-included", "Services Included" ] ],
+    "multiple" : true,
+    "reordering_enabled" : false,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : [ "package", "cost", "deliverables", "services-included" ]
+  }, {
+    "id" : "add_on_tables.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 1
+    },
+    "children" : [ {
+      "id" : "add_on_tables.products.product",
+      "name" : "product",
+      "label" : "Product",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    }, {
+      "id" : "add_on_tables.products.setup_fee",
+      "name" : "setup_fee",
+      "label" : "Setup Fee (Optional)",
+      "required" : false,
+      "locked" : false,
+      "object_type" : "PRODUCT",
+      "type" : "crmobject",
+      "display_width" : null
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+} ]

@@ -1,0 +1,59 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  user_modal,
+%}
+
+{# Module-specific options #}
+{# {% set users = module.data_query.data.CRM.contact.associations.company_collection__primary.items[0].associations.contact_collection__company_to_contact.items %} #}
+{% set users = module.data_query.data.CRM.company.associations.contact_collection__company_to_contact_unlabeled.items %}
+{% set headerContent = module.header_content %}
+
+{# Markup #}
+<div class="module">
+  <div class="constrain">
+    <div class="module__header module__header--button-top">
+      <div class="constrain--7">
+        {{ headerContent }}
+      </div>
+      <button class="user-manager__add-user cta-btn cta-btn--small cta-btn--primary modal-trigger" data-modal="new-user">
+        <span class="material-symbols-rounded">
+          add
+        </span>
+        <span>
+          Add a New User
+        </span>
+      </button>
+    </div>
+    <div class="user-table">
+      <div class="user-table__header">
+        <div class="user-table__th"></div>
+        <div class="user-table__th">Name</div>
+        {# <div class="user-table__th">Role</div> #}
+        <div class="user-table__th">Email</div>
+        <div class="user-table__th">Phone</div>
+        {# <div class="user-table__th"></div> #}
+      </div>
+      <div class="user-table__body">
+        {% for user in users %}
+          <div class="user-table__row">
+            <div class="user-table__td">
+              {{ user.hs_avatar_filemanager_key }}
+              <div class="user-table__avatar">{{ user.firstname|list|first }}{{ user.lastname|list|first }}</div>
+            </div>
+            <div class="user-table__td">{{ user.firstname }} {{ user.lastname }}</div>
+            {# <div class="user-table__td">Role</div> #}
+            <div class="user-table__td">{{ user.email }}</div>
+            <div class="user-table__td">{{ user.phone || '-' }}</div>
+            {# <div class="user-table__td">
+              <button class="user-table__edit modal-trigger" data-modal="edit-user">
+                <span class="material-symbols-rounded">edit</span>
+              </button>
+            </div> #}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ user_modal('new') }}
+{{ user_modal('edit') }}

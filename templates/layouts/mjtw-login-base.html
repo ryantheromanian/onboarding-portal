@@ -1,0 +1,130 @@
+<!--
+  templateType: "none"
+  isAvailableForNewContent: false
+-->
+<!doctype html>
+<html lang="{{ html_lang }}" {{ html_lang_dir }}>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <title>{{ page_meta.html_title }}</title>
+    {% if site_settings.favicon_src %}<link rel="shortcut icon" href="{{ site_settings.favicon_src }}" />{% endif %}
+    <meta name="description" content="{{ page_meta.meta_description }}">
+
+    {# Use this for loading fonts from HubSpot rather than a CDN #}
+    <link rel="preload" href="{{ get_asset_url('../../fonts/bai-jamjuree-v12-latin-300.woff2') }}" as="font">
+    {# <link rel="preload" href="{{ get_asset_url('../../fonts/montserrat-v25-latin-regular.woff2') }}" as="font"> #}
+    {# <link rel="preload" href="{{ get_asset_url('../../fonts/montserrat-v25-latin-500.woff2') }}" as="font"> #}
+    {# <link rel="preload" href="{{ get_asset_url('../../fonts/material-symbols-rounded-48-500-1-0.woff2') }}" as="font"> #}
+
+    {# CSS + JS #}
+    <link rel="preload" href="{{ get_asset_url('../../css/mjtw_styles--mobile.css') }}" as="style">
+    <link rel="preload" href="{{ get_asset_url('../../css/mjtw_styles--desktop.css') }}" as="style" media="(min-width: 769px)">
+    {# <link rel="preload" href="{{ get_asset_url('../../js/mjtw_main.js') }}" as="script"> #}
+
+    {# Hex to HSV to HSL - use for generating light/dark/neutral based on single colors #}
+    {% include '../partials/mjtw-color-configuration.html' %}
+
+    {# proxima-nova #}
+    <link rel=“stylesheet” href=“https://use.typekit.net/vts2gpx.css”>
+    <style>
+      {# Main fonts #}
+      @font-face {
+        font-family: "Bai Jamjuree";
+        src: url("{{ get_asset_url('../../fonts/bai-jamjuree-v12-latin-300.woff2') }}") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      {# @font-face {
+        font-family: "Montserrat";
+        src: url("{{ get_asset_url('../../fonts/montserrat-v25-latin-700.woff2') }}") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Montserrat";
+        src: url("{{ get_asset_url('../../fonts/montserrat-v25-latin-500.woff2') }}") format("woff2");
+        font-weight: 500;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Montserrat";
+        src: url("{{ get_asset_url('../../fonts/montserrat-v25-latin-regular.woff2') }}") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      } #}
+
+      {# Google icons #}
+      @font-face {
+        font-family: 'Material Symbols Rounded';
+        font-style: normal;
+        font-weight: 100;
+        src: url("{{ get_asset_url('../../fonts/material-symbols-rounded-48-500-1-0.woff2') }}") format('woff2');
+        font-display: block;
+      }
+
+      .material-symbols-rounded {
+        font-family: 'Material Symbols Rounded';
+        font-weight: normal;
+        font-style: normal;
+        /* font-size: 24px; */
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -moz-font-feature-settings: 'liga';
+        -moz-osx-font-smoothing: grayscale;
+        /* width: 24px;
+        height: 24px; */
+        font-size: 1em;
+        width: 1em;
+        height: 1em;
+      }
+
+      {# Google Icons - variable font settings - not supported in all major browsers yet #}
+      /* .material-symbols-rounded {
+        font-variation-settings:
+          'FILL' 1,
+          'wght' 400,
+          'GRAD' 200,
+          'opsz' 48
+      } */
+    </style>
+
+    
+    <link rel="stylesheet" href="{{ get_asset_url('../../css/mjtw_styles--mobile.css') }}">
+    <link rel="stylesheet" href="{{ get_asset_url('../../css/mjtw_styles--desktop.css') }}" media="(min-width: 769px)">
+    {{ require_js(get_asset_url('../../js/mjtw_main.js'), { position: 'footer', defer: true }) }}
+    {{ standard_header_includes }}
+    <meta name="robots" content="noindex, nofollow">
+    {% block additional_head %}
+      {# Additional head tags get inserted here (such as noindex on thank you pages) #}
+    {% endblock additional_head %}
+  </head>
+
+  <body class="{{ builtin_body_classes }}">
+    <main class="membership__grid">
+      <div class="membership__column membership__column--content">
+        <img class="membership__logo-image" src="{{ theme.logos.apartment_geofencing.src }}" alt="{{ theme.logos.apartment_geofencing.alt }}" width="{{ theme.logos.apartment_geofencing.width }}" height="{{ theme.logos.apartment_geofencing.height }}">
+        <div class="card card--membership">
+          {% block membership_content %}
+          {% endblock %}
+        </div>
+      </div>
+      <div class="membership__column membership__column--image">
+        <img class="membership__splash-image" src="https://7954923.fs1.hubspotusercontent-na1.net/hubfs/7954923/assets-onboarding/images/login-splash-image.jpg" alt="">
+      </div>
+    </main>
+    {{ standard_footer_includes }}
+  </body>
+</html>

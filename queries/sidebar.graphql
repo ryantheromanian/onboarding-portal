@@ -1,0 +1,18 @@
+# $contactEmail: "{{ contact.email }}"
+query MyQuery($contactEmail: String!) {
+  CRM {
+    contact(uniqueIdentifier: "email", uniqueIdentifierValue: $contactEmail) {
+      email
+      firstname
+      lastname
+      hubspot_owner_id
+      associations {
+        p_properties_collection__property_to_contact {
+          items {
+            property_name
+          }
+        }
+      }
+    }
+  }
+}

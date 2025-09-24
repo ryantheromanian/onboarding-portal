@@ -1,0 +1,60 @@
+[ {
+  "id" : "intro_content",
+  "name" : "intro_content",
+  "label" : "Intro Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<p>Quick actions subheadline here.</p><h6>What to expect:</h6><p>Placeholder paragraph here for editing by Intrinsic Digital team. Lorem ipsum dolor sit amet.</p>"
+}, {
+  "id" : "quick_actions",
+  "name" : "quick_actions",
+  "label" : "Quick Actions",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 2
+  },
+  "children" : [ {
+    "id" : "quick_actions.link_text",
+    "name" : "link_text",
+    "label" : "Link Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "<span class=\"material-symbols-rounded\">add_circle</span> Add a New Property"
+  }, {
+    "id" : "quick_actions.link",
+    "name" : "link",
+    "label" : "Link",
+    "required" : false,
+    "locked" : false,
+    "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG" ],
+    "show_advanced_rel_options" : false,
+    "type" : "link",
+    "display_width" : null,
+    "default" : {
+      "url" : {
+        "type" : "EXTERNAL",
+        "content_id" : null,
+        "href" : "",
+        "href_with_scheme" : ""
+      },
+      "open_in_new_tab" : false,
+      "no_follow" : false,
+      "sponsored" : false,
+      "user_generated_content" : false
+    }
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+} ]

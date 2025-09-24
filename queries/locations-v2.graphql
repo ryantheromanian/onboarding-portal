@@ -1,0 +1,32 @@
+# $activeCompany: "{{ contact.active_company || contact.associatedcompanyid }}"
+query MyQuery($activeCompany: String!) {
+  CRM {
+    company(uniqueIdentifier: "hs_object_id", uniqueIdentifierValue: $activeCompany) {
+      name
+      hs_object_id
+      pricing
+      associations {
+        p_properties_collection__property_to_company(limit: 500) {
+          items {
+            hs_object_id
+            property_image
+            property_name
+            property_address
+            property_address_2
+            property_city
+            property_state
+            property_zip_code
+            property_date_opened
+            associations {
+              ticket_collection__property_to_ticket {
+                items {
+                  hs_pipeline_stage
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

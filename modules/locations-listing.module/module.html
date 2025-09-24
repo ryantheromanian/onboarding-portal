@@ -1,0 +1,62 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  location_modal,
+%}
+
+{# Query Info #}
+{# {% set companies = data_query.data.CRM.contact.associations.company_collection__primary.items %} #}
+{% set companies = [data_query.data.CRM.company] %}
+
+{# Module-specific options #}
+
+{# Markup #}
+<div class="module" data-vertical="{{ vertical }}">
+  <div class="constrain">
+    <h1>My {{ locationTypePlural }}</h1>
+    {# <p>{{ contact.associatedcompanyid }}</p> #}
+    <div class="module__grid module__grid--four-col">
+      <div>
+        <button class="new-location modal-trigger" data-modal="new-location">
+          <span class="new-location__icon cta-btn cta-btn--primary">
+            <span class="material-symbols-rounded">add</span>
+          </span>
+          <span class="new-location__label">Add New {{ locationType }}</span>
+        </button>
+      </div>
+      {% for company in companies %}
+        {% set locations = company.associations.p_properties_collection__property_to_company.items %}
+        {% for location in locations %}
+          {% set locationTickets = location.associations.ticket_collection__property_to_ticket.items %}
+          <div>
+            <a class="location-card" href="{{ request.path }}/{{ location.hs_object_id }}">
+              {# {{ location }} #}
+              <div class="location-card__image">
+                {% if location.property_image %}
+                  <img class="location-card__image-element" src="{{ location.property_image }}" alt="">
+                {% endif %}
+              </div>
+              <div class="location-card__info">
+                <span class="location-card__name h5">{{ location.property_name }}</span>
+                <span class="location-card__address">{{ location.property_address }}</span>
+                {% if location.property_address_2 %}
+                  <span class="location-card__address">{{ location.property_address_2 }}</span>
+                {% endif %}
+                <span class="location-card__address">{{ location.property_city }}, {{ location.property_state.value }} {{ location.property_zip_code }}</span>
+
+
+                {% for subscription in locationTickets %}
+                  {% set pipleineStatusNum = 'a' ~ subscription.hs_pipeline_stage.value|string %}
+                  {% set subscriptionStatus = ticketStatusValues[pipleineStatusNum] %}
+                  <span class="location-card__status location-card__status--{{ subscriptionStatus.class }}">
+                    <span class="material-symbols-rounded">{{ subscriptionStatus.icon }}</span> {{ subscriptionStatus.label }}
+                  </span>
+                {% endfor %}
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{{ location_modal('new') }}

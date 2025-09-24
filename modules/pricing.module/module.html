@@ -1,0 +1,64 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  pricing_card_v2,
+  pricing_table,
+%}
+
+
+{% set companies = module.data_query.data.CRM.contact.associations.company_collection__primary.items %}
+{% set pricingType = {
+  useLegacy: false
+} %}
+
+{% for company in companies %}
+  {% if company.pricing == 'Old' %}
+    {% do pricingType.update({ useLegacy: true }) %}
+  {% endif %}
+{% endfor %}
+
+{# Module-specific options #}
+{% set mainContent = module.main_content %}
+{% set productCards = module.product_cards %}
+{% set legacyProductCards = module.legacy_product_cards %}
+{% set defaultAddons = module.default_add_ons %}
+{% set addOnContent = module.add_on_content %}
+{% set addOnTables = module.add_on_tables %}
+
+{# Markup #}
+<div class="module">
+  <div class="constrain">
+    <div class="module__header constrain--7">
+      {{ mainContent }}
+    </div>
+    <div class="module__grid module__grid--one-col module__grid--pricing">
+      {% if !pricingType.useLegacy || request.postDict.inpageEditorUI %}
+        {% for product in productCards %}
+          {% if product.main_product %}
+            <div class="module__grid-item">
+              {{ pricing_card_v2(product.main_product.properties, 'start', product.setup_fee.properties, product.default_add_on_groups, defaultAddons.table_title) }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% if pricingType.useLegacy || request.postDict.inpageEditorUI %}
+        {% for product in productCards %}
+          {% if product.legacy_main_product %}
+            <div class="module__grid-item" data-legacy="true">
+              {{ pricing_card_v2(product.legacy_main_product.properties, 'start', product.legacy_setup_fee.properties, product.default_add_on_groups, defaultAddons.table_title) }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% if defaultAddons.products %}
+      <a id="service-details"></a>
+      <br>
+      {{ pricing_table(defaultAddons) }}
+    {% endif %}
+    <div class="module__header constrain--7">
+      {{ addOnContent }}
+    </div>
+    {% for table in addOnTables %}
+      {{ pricing_table(table) }}
+    {% endfor %}
+  </div>
+</div>

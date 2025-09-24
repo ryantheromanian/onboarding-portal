@@ -1,0 +1,71 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  location_modal,
+  subscription_table,
+%}
+
+{# Module-specific options #}
+{% set subscriptions = crm_associations(dynamic_page_crm_object.id, 'USER_DEFINED', 31, '', 'subject,hs_pipeline_stage,monthly_price,campaign_start_date').results %}
+
+{# Macros #}
+{% macro location_detail_table_row(label, value) %}
+  <div class="location-detail__table-row">
+    <span class="location-detail__table-row-label">{{ label }}</span>
+    <span class="location-detail__table-row-value">{{ value }}</span>
+  </div>
+{% endmacro %}
+
+{# Markup #}
+<div id="meta-location" data-locationid="{{ dynamic_page_crm_object.id }}"></div>
+<div class="module">
+  <div class="constrain">
+    <div class="module__header module__header--button-center">
+      <h1>{{ dynamic_page_crm_object.property_name }}</h1>
+      <button class="location-detail__edit cta-btn cta-btn--small cta-btn--info modal-trigger" data-modal="edit-location">
+        <span class="material-symbols-rounded">
+          edit
+        </span>
+        <span>
+          Edit {{ locationType }}
+        </span>
+      </button>
+    </div>
+    {# <p>{{ dynamic_page_crm_object.id }}</p> #}
+    <div class="location-detail__card">
+      <div class="location-detail__table">
+        {% if dynamic_page_crm_object.property_address_2 %}
+          {% set locationAddres = dynamic_page_crm_object.property_address ~ ', ' ~ dynamic_page_crm_object.property_address_2 ~ ', ' ~ dynamic_page_crm_object.property_city ~ ', ' ~ dynamic_page_crm_object.property_state ~ ' ' ~ dynamic_page_crm_object.property_zip_code %}
+        {% else %}
+          {% set locationAddres = dynamic_page_crm_object.property_address ~ ', ' ~ dynamic_page_crm_object.property_city ~ ', ' ~ dynamic_page_crm_object.property_state ~ ' ' ~ dynamic_page_crm_object.property_zip_code %}
+        {% endif %}
+        {{ location_detail_table_row('Address', locationAddres) }}
+        {% if dynamic_page_crm_object.property_date_opened %}
+          {% set dateOpened = dynamic_page_crm_object.property_date_opened|format_date('long') %}
+        {% else %}
+          {% set dateOpened = 'N/A' %}
+        {% endif %}
+        {{ location_detail_table_row('Date Opened', dateOpened) }}
+        {{ location_detail_table_row('Notes', dynamic_page_crm_object.property_notes) }}
+      </div>
+      <div class="location-detail__photo location-detail__photo--{% if dynamic_page_crm_object.property_image %}has-photo{% else %}empty{% endif %}" data-imageid="{{ dynamic_page_crm_object.property_image_id }}">
+        {% if dynamic_page_crm_object.property_image %}
+          <img class="location-detail__photo-element" src="{{ dynamic_page_crm_object.property_image }}" alt="">
+        {% endif %}
+        <input type="file" class="location-detail__photo-input" style="display: none;">
+      </div>
+    </div>
+    <div class="location-detail__subscriptions">
+      <div class="location-detail__subscriptions-header module__header module__header--button-center">
+        <h2>Subscription</h2>
+      </div>
+      {% if subscriptions|length > 0 %}
+        {{ subscription_table(subscriptions) }}
+      {% else %}
+        <a class="cta-btn cta-btn--large cta-btn--primary" href="/new-subscription">
+          <span class="material-symbols-rounded">add</span>
+          Start a New Subscription
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{{ location_modal('edit') }}

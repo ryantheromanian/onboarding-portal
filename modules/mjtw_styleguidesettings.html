@@ -1,0 +1,323 @@
+<!--
+  templateType: "none"
+  isAvailableForNewContent: false
+-->
+{% set style_guide = {
+  'logos': {
+    'label': 'Logos',
+    'type': 'logos',
+    'content': {
+      'logos': theme.logos
+    }
+  },
+  'colors': {
+    'label': 'Colors',
+    'type': 'colors',
+    'content': {
+      'colors': {
+        'brand': {
+          'label': 'Brand',
+          'colors': theme.colors,
+          'source': 'theme'
+        },
+        'neutral': {
+          'label': 'Neutral',
+          'colors': theme.colors_neutral,
+          'source': 'theme'
+        },
+        'content': {
+          'label': 'Content',
+          'colors': theme.colors_content,
+          'source': 'theme'
+        },
+        'interactions': {
+          'label': 'Interactions',
+          'colors': theme.colors_interactions,
+          'source': 'theme'
+        },
+        'overlays': {
+          'label': 'Overlays',
+          'colors': [
+            'Solid Dark',
+            'Solid Medium',
+            'Solid Light',
+            'Gradient Dark',
+            'Gradient Medium',
+            'Gradient Light'
+          ],
+          'source': 'static',
+          'card_type': 'color'
+        }
+      }
+    }
+  },
+  'styles': {
+    'label': 'Styles',
+    'type': 'styles',
+    'content': {
+      'shadows': {
+        'label': 'Shadows',
+        'card_type': 'style',
+        'options': [
+          'Shadow Level 1',
+          'Shadow Level 2',
+          'Shadow Level 3',
+          'Shadow Level 4'
+        ]
+      }
+    }
+  },
+  'buttons_links': {
+    'label': 'Buttons & Links',
+    'id': 'buttons_links',
+    'type': 'buttons_links',
+    'content': {
+      'buttons': {
+        'label': 'CTA Buttons',
+        'base_class': 'cta-btn',
+        'sizes': [
+          'small', 
+          'medium', 
+          'large'
+        ],
+        'styles': [
+          'primary-fill'
+        ]
+      },
+      'links': {
+        'label': 'CTA Links',
+        'base_class': 'cta-link',
+        'sizes': ['medium'],
+        'styles': ['chevron']
+      },
+      'groups': {
+        'label': 'Button Groups',
+        'sample_class': '.btn-group',
+        'content': {
+          'default': {
+            'label': '.btn-group',
+            'content': '<ul class=\'btn-group\'><li><a class=\'cta-btn cta-btn--medium\'>Button Text</a></li><li><a class=\'cta-btn cta-btn--medium\'>Longer Button Text</a></li><li><a class=\'cta-btn cta-btn--medium\'>Button Text Example</a></li><li><a class=\'cta-btn cta-btn--medium\'>Button</a></li></ul>'
+          },
+          'centered': {
+            'label': '.btn-group .btn-group--center',
+            'content': '<ul class=\'btn-group btn-group--center\'><li><a class=\'cta-btn cta-btn--medium\'>Button Text</a></li><li><a class=\'cta-btn cta-btn--medium\'>Longer Button Text</a></li><li><a class=\'cta-btn cta-btn--medium\'>Button Text Example</a></li><li><a class=\'cta-btn cta-btn--medium\'>Button</a></li></ul>'
+          }
+        }
+      }
+    }
+  },
+  'typography': {
+    'label': 'Typography',
+    'id': 'typography',
+    'type': 'content',
+    'content': {
+      'Display 1': {
+        'tag': 'div',
+        'class': 'display--1',
+        'text': 'Display 1',
+      },
+      'Display 2': {
+        'tag': 'div',
+        'class': 'display--2',
+        'text': 'Display 2',
+      },
+      'h1': {
+        'tag': 'h1',
+        'text': 'Heading 1',
+      },  
+      'h2': {
+        'tag': 'h2',
+        'text': 'Heading 2',
+      },    
+      'h3': {
+        'tag': 'h3',
+        'text': 'Heading 3',
+      },  
+      'h4': {
+        'tag': 'h4',
+        'text': 'Heading 4',
+      },   
+      'h5': {
+        'tag': 'h5',
+        'text': 'Heading 5',
+      },  
+      'h6': {
+        'tag': 'h6',
+        'text': 'Heading 6',
+      },  
+      'p': {
+        'tag': 'p',
+        'text': 'Paragraph',
+      },   
+      'p.small': {
+        'tag': 'p',
+        'class': 'small',
+        'text': 'Small Paragraph',
+      }, 
+      'p.large': {
+        'tag': 'p',
+        'class': 'large',
+        'text': 'Large Paragraph',
+      },    
+      'blockquote': {
+        'tag': 'blockquote',
+        'class': '',
+        'text': 'Blockquote',
+      }, 
+      'blockquote.large': {
+        'tag': 'blockquote',
+        'class': 'large',
+        'text': 'Large Blockquote',
+      }
+    }
+  },
+  'lists': {
+    'label': 'Lists',
+    'type': 'content',
+    'id': 'lists',
+    'content': {
+      'unordered list': {
+        'class': '',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Unordered List',
+       },
+      'ordered list': {
+        'class': '',
+        'tag': 'ol',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Ordered List',
+       },
+       'checklist': {
+        'class': 'checklist',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Checklist',
+       },
+       'step-list': {
+        'class': 'step-list',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Step List',
+       },
+       'inline-step-list': {
+        'class': 'step-list inline',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Inline Step List',
+       },
+       'number-list': {
+        'class': 'number-list',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Number List',
+       },
+       'inline-number-list': {
+        'class': 'number-list inline',
+        'tag': 'ul',
+        'text': '<li>List item</li><li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li><li>List item</li>',
+        'label': 'Inline Number List',
+       }
+    }
+  },
+  'testimonials': {
+    'label': 'Testimonials',
+    'type': 'testimonials',
+    'id': 'testimonials',
+    'content': {
+      'normal': {
+        'label': 'Normal',
+        'testimonial': {
+          'testimonial_citation_logo': {
+            'src': 'https://via.placeholder.com/100',
+            'alt': 'logo'
+          },
+          'testimonial_citation_logo_placement': 'top',
+          'show_testimonial_rating_': false,
+          'testimonial_rating': 5,
+          'testimonial_content': '<blockquote>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi corrupti, aliquam cumque iste saepe itaque quod, voluptatum nihil ullam velit ipsam asperiores odio accusantium culpa atque totam facilis officiis libero!</blockquote>',
+          'testimonial_citation_photo': {
+            'src': 'https://via.placeholder.com/100',
+            'alt': '',
+            'width': 100,
+            'height': 100
+          },
+          'testimonial_citation_name': 'Full Name',
+          'testimonial_citation_title': 'Position, Company Name',
+          'testimonial_style': 'normal',
+          'testimonial_text_alignment': 'center'
+        }
+      },
+      'large': {
+        'label': 'Large',
+        'testimonial': {
+          'testimonial_citation_logo': {
+            'src': '',
+            'alt': ''
+          },
+          'testimonial_citation_logo_placement': 'top',
+          'show_testimonial_rating_': false,
+          'testimonial_rating': 5,
+          'testimonial_content': '<blockquote>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi corrupti, aliquam cumque iste saepe itaque quod, voluptatum nihil ullam velit ipsam asperiores odio accusantium culpa atque totam facilis officiis libero!</blockquote>',
+          'testimonial_citation_photo': {
+            'src': 'https://via.placeholder.com/100',
+            'alt': '',
+            'width': 100,
+            'height': 100
+          },
+          'testimonial_citation_name': 'Full Name',
+          'testimonial_citation_title': 'Position, Company Name',
+          'testimonial_style': 'large',
+          'testimonial_text_alignment': 'left'
+        }
+      },
+      'boxed': {
+        'label': 'Boxed',
+        'testimonial': {
+          'testimonial_citation_logo': {
+            'src': 'https://21657138.fs1.hubspotusercontent-na1.net/hubfs/21657138/assets/images/logos/logo-full-color.svg',
+            'alt': 'logo'
+          },
+          'testimonial_citation_logo_placement': 'top',
+          'show_testimonial_rating_': true,
+          'testimonial_rating': 5,
+          'testimonial_content': '<blockquote>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi corrupti, aliquam cumque iste saepe itaque quod, voluptatum nihil ullam velit ipsam asperiores odio accusantium culpa atque totam facilis officiis libero!</blockquote>',
+          'testimonial_citation_photo': {
+            'src': 'https://via.placeholder.com/100',
+            'alt': '',
+            'width': 100,
+            'height': 100
+          },
+          'testimonial_citation_name': 'Full Name',
+          'testimonial_citation_title': 'Position, Company Name',
+          'testimonial_style': 'boxed',
+          'testimonial_text_alignment': 'left'
+        }
+      },
+      'boxed large': {
+        'label': 'Boxed Large',
+        'width': 'full-width',
+        'testimonial': {
+          'testimonial_citation_logo': {
+            'src': 'https://21657138.fs1.hubspotusercontent-na1.net/hubfs/21657138/assets/images/logos/logo-full-color.svg',
+            'alt': 'logo'
+          },
+          'testimonial_citation_logo_placement': 'bottom',
+          'show_testimonial_rating_': false,
+          'testimonial_rating': 5,
+          'testimonial_content': '<blockquote>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi corrupti, aliquam cumque iste saepe itaque quod, voluptatum nihil ullam velit ipsam asperiores odio accusantium culpa atque totam facilis officiis libero!</blockquote>',
+          'testimonial_citation_photo': {
+            'src': 'https://via.placeholder.com/100',
+            'alt': '',
+            'width': 100,
+            'height': 100
+          },
+          'testimonial_citation_name': 'Full Name',
+          'testimonial_citation_title': 'Position, Company Name',
+          'testimonial_style': 'boxed-large',
+          'testimonial_text_alignment': 'left'
+        }
+      }
+    }
+  }
+} %}

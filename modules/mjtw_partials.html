@@ -1,0 +1,1706 @@
+<!--
+  templateType: "none"
+  isAvailableForNewContent: false
+-->
+{# Base partials #}
+{% macro linkattributes(link) %}href="{% if link.url.type == 'EMAIL_ADDRESS' %}mailto:{% endif %}{{ link.url.href }}"{% if link.open_in_new_tab %} target="_blank" rel="noopener noreferrer{% if link.no_follow %} nofollow{% endif %}"{% elif link.no_follow %} rel="nofollow"{% endif %}{% endmacro %}
+
+{% macro picture(img, size, ratio) %}
+  {% if img.src %}
+    {% if !ratio %}
+      {% set ratio = img.height / img.width * 100 %}
+    {% endif %}
+
+    <picture class="module__picture" {# style="padding-bottom: {{ ratio }}%;" #}>
+      {# Mobile smallest #}
+      <source media="(max-width: 360px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, 660) }}">
+      <source media="(max-width: 360px)" srcset="{{ resize_image_url(img.src, 330) }}">
+
+      {# Mobile smaller #}
+      <source media="(max-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, 900) }}">
+      <source media="(max-width: 480px)" srcset="{{ resize_image_url(img.src, 450) }}">
+
+      {# Mobile #}
+      {# Stop using size variable because most mobile images will be full width. #}
+      <source media="(max-width: 767px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, 1474) }}">
+      <source media="(max-width: 767px)" srcset="{{ resize_image_url(img.src, 737) }}">
+
+      {# Tablet #}
+      <source media="(max-width: 991px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, size * .7 * 2) }}">
+      <source media="(max-width: 991px)" srcset="{{ resize_image_url(img.src, size * .7) }}">
+
+      {# Laptop #}
+      <source media="(max-width: 1439px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, size * .9 * 2) }}">
+      <source media="(max-width: 1439px)" srcset="{{ resize_image_url(img.src, size * .9) }}">
+
+      {# Desktop #}
+      <source media="(max-width: 1920px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, size * 2) }}">
+      <source media="(max-width: 1920px)" srcset="{{ resize_image_url(img.src, size) }}">
+
+      {# Image element #}
+      <img class="module__picture-element" src="{{ img.src }}" alt="{{ img.alt }}" {% if modules|length > 1 %}loading="lazy"{% endif %} width="{{ img.width }}" height="{{ img.height }}">
+    </picture>
+  {% endif %}
+{% endmacro %}
+
+{% macro icon(img, size, mode) %}
+  {% if img.src %}
+    <picture class="module__icon">
+      {# Retina / high-density displays #}
+      <source media="(-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(img.src, size * 2) }}">
+
+      {# Standard pixel density displays #}
+      <source srcset="{{ resize_image_url(img.src, size) }}">
+
+      {# Image element #}
+      <img class="module__icon-element{% if mode %} module__icon-element--{{ mode }}{% endif %}" src="{{ img.src }}" alt="{{ img.alt }}" {% if modules|length > 1 %}loading="lazy"{% endif %} width="{{ img.width }}" height="{{ img.height }}">
+    </picture>
+  {% endif %}
+{% endmacro %}
+
+{% macro appended_element(element) %}
+  {% set type = element.element_type %}
+
+  <div class="appended-elements__{{ type }}">
+    {% if type == 'buttons' %}
+      <ul class="btn-group">
+        {% for button in element.buttons %}
+          {% set btnType = button.button_type %}
+          {% set cta = button.cta %}
+          {% set btnText = button.button_text %}
+          {% set btnStyle = button.button_style %}
+          {% set btnLink = button.button_link %}
+
+          <li>
+            {% if btnType == 'cta' %}
+              {% cta guid="{{ cta }}" %}
+            {% else %}
+              <a class="cta-btn cta-btn--large cta-btn--{{ btnStyle }}" {{ linkattributes(btnLink) }}>
+                {{ btnText }}
+              </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+
+    {% elif type == 'testimonial' %}
+      {{ testimonial(element.testimonial) }}
+
+    {% elif type == 'form' %}
+      {% set style = element.form.form_style || 'single-line' %}
+
+      <div class="appended-elements__{{ type }}--{{ style }}">
+        {% form
+          form_to_use="{{ element.form.form.form_id }}"
+          response_response_type="{{ element.form.form.response_type }}"
+          response_message="{{ element.form.form.message }}"
+          response_redirect_id="{{ element.form.form.redirect_id }}"
+          response_redirect_url="{{ element.form.form.redirect_url}}"
+          gotowebinar_webinar_key="{{ element.form.form.gotowebinar_webinar_key }}"
+        %}
+      </div>
+
+    {% elif type == 'search-form' %}
+      {% set search_form = element.search_form %}
+
+      <form action="/{{ site_settings.content_search_results_page_path }}">
+    
+        <input type="text" class="hs-search-field__input" name="term" autocomplete="off" aria-label="{{ search_form.placeholder_text }}" placeholder="{{ search_form.placeholder_text }}">
+        
+        {% if search_form.search_website_pages_ %}
+          <input type="hidden" name="type" value="SITE_PAGE">
+        {% endif %}
+        {% if search_form.search_landing_pages_ %}
+          <input type="hidden" name="type" value="LANDING_PAGE">
+        {% endif %}
+        {% if search_form.search_blog_posts_ %}
+          <input type="hidden" name="type" value="BLOG_POST">
+          <input type="hidden" name="type" value="LISTING_PAGE">
+        {% endif %}
+        {% if search_form.search_knowledge_articles_ %}
+          <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+        {% endif %}
+
+        {% if search_form.include_search_button_ %}
+          <button aria-label="Search">{{ search_form.button_text || 'Search' }}</button>
+        {% endif %}
+      </form>
+
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% macro background_color(modifier, backgroundColor) %}{% if backgroundColor != '' %}{{ modifier }}bg-{{ backgroundColor }}{% endif %}{% endmacro %} 
+
+{% macro social_icon_link(style, link, size, title, share) %}
+  {% if style == 'copy' %}
+    <input class="social-icon-link__copy-input" type="text" value="{{ content.absolute_url }}">
+  {% endif %}
+  <a class="social-icon-link social-icon-link--{{ size }} social-icon-link--{{ style }}{% if share %} social-icon-link--share{% endif %}" href="{{ link }}" target="_blank"{% if title %} title="{{ title }}"{% endif %}{% if style == 'copy' %} data-tooltip="Copied!"{% endif %}>
+    {% if style == 'facebook' %}
+      <svg class="social-icon-link__svg" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path class="social-icon-link__path" d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Share</span>
+      {% endif %}
+    {% elif style == 'twitter' %}
+      <svg class="social-icon-link__svg" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path class="social-icon-link__path" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Tweet</span>
+      {% endif %}
+    {% elif style == 'linkedin' %}
+      <svg class="social-icon-link__svg" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path class="social-icon-link__path" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Share</span>
+      {% endif %}
+    {% elif style == 'pinterest' %}
+      <svg class="social-icon-link__svg" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+        <path class="social-icon-link__path" d="M496 256c0 137-111 248-248 248-25.6 0-50.2-3.9-73.4-11.1 10.1-16.5 25.2-43.5 30.8-65 3-11.6 15.4-59 15.4-59 8.1 15.4 31.7 28.5 56.8 28.5 74.8 0 128.7-68.8 128.7-154.3 0-81.9-66.9-143.2-152.9-143.2-107 0-163.9 71.8-163.9 150.1 0 36.4 19.4 81.7 50.3 96.1 4.7 2.2 7.2 1.2 8.3-3.3.8-3.4 5-20.3 6.9-28.1.6-2.5.3-4.7-1.7-7.1-10.1-12.5-18.3-35.3-18.3-56.6 0-54.7 41.4-107.6 112-107.6 60.9 0 103.6 41.5 103.6 100.9 0 67.1-33.9 113.6-78 113.6-24.3 0-42.6-20.1-36.7-44.8 7-29.5 20.5-61.3 20.5-82.6 0-19-10.2-34.9-31.4-34.9-24.9 0-44.9 25.7-44.9 60.2 0 22 7.4 36.8 7.4 36.8s-24.5 103.8-29 123.2c-5 21.4-3 51.6-.9 71.2C65.4 450.9 0 361.1 0 256 0 119 111 8 248 8s248 111 248 248z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Pin</span>
+      {% endif %}
+    {% elif style == 'email' %}
+      <svg class="social-icon-link__svg" width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path class="social-icon-link__path" d="M464 64C490.5 64 512 85.49 512 112C512 127.1 504.9 141.3 492.8 150.4L275.2 313.6C263.8 322.1 248.2 322.1 236.8 313.6L19.2 150.4C7.113 141.3 0 127.1 0 112C0 85.49 21.49 64 48 64H464zM217.6 339.2C240.4 356.3 271.6 356.3 294.4 339.2L512 176V384C512 419.3 483.3 448 448 448H64C28.65 448 0 419.3 0 384V176L217.6 339.2z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Email</span>
+      {% endif %}
+    {% elif style == 'copy' %}
+      <svg class="social-icon-link__svg" width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path class="social-icon-link__path" d="M11.75 0.25H9.5C9.0875 0.25 8.75 0.5875 8.75 1C8.75 1.4125 9.0875 1.75 9.5 1.75H11.75C12.9875 1.75 14 2.7625 14 4C14 5.2375 12.9875 6.25 11.75 6.25H9.5C9.0875 6.25 8.75 6.5875 8.75 7C8.75 7.4125 9.0875 7.75 9.5 7.75H11.75C13.82 7.75 15.5 6.07 15.5 4C15.5 1.93 13.82 0.25 11.75 0.25ZM5 4C5 4.4125 5.3375 4.75 5.75 4.75H10.25C10.6625 4.75 11 4.4125 11 4C11 3.5875 10.6625 3.25 10.25 3.25H5.75C5.3375 3.25 5 3.5875 5 4ZM6.5 6.25H4.25C3.0125 6.25 2 5.2375 2 4C2 2.7625 3.0125 1.75 4.25 1.75H6.5C6.9125 1.75 7.25 1.4125 7.25 1C7.25 0.5875 6.9125 0.25 6.5 0.25H4.25C2.18 0.25 0.5 1.93 0.5 4C0.5 6.07 2.18 7.75 4.25 7.75H6.5C6.9125 7.75 7.25 7.4125 7.25 7C7.25 6.5875 6.9125 6.25 6.5 6.25Z"/>
+      </svg>
+      {% if size == 'label' %}
+        <span>Copy</span>
+      {% endif %}
+    {% endif %}
+  </a>
+{% endmacro %}
+
+{% macro blog_author_section(author, style) %}
+  {% set blogURL = group.absolute_url %}
+  {% set name = author.display_name %}
+  {% set photo = author.avatar %}
+  {% set slug = author.slug %}
+  {% set bio = author.bio %}
+  {% set hasSocialProfiles = author.has_social_profiles %}
+  {% set facebook = author.facebook %}
+  {% set linkedin = author.linkedin %}
+  {% set twitter = author.twitter %}
+  {% set google = author.google %}
+  
+  {% if bio %}
+    <div class="blog-author blog-author--{{ style }} {% if photo %}blog-author--has-photo{% endif %}">
+      {% if photo %}
+        <img class="blog-author__photo" width="200" height="200" alt="{{ name|escape }}" src="{{ photo }}">
+      {% endif %}
+
+      <div class="blog-author__bio">
+        <div class="blog-author__info">
+          {% if is_listing_view %}
+            <h1>{{ name }}</h1>
+          {% else %}
+            <a class="blog-author__name h3" href="{{ blog_author_url(group.id, slug) }}">{{ name }}</a>
+          {% endif %}
+
+          <p class="blog-author__bio-text">{{ bio }}</p>
+
+          {% if hasSocialProfiles %}
+            <ul class="blog-author__social-links">
+              {% if linkedin %}
+                <li>
+                  {{ social_icon_link('linkedin', linkedin, 'small', 'Follow ' ~ name ~ ' on LinkedIn') }}
+                </li>
+              {% endif %}
+
+              {% if facebook %}
+                <li>
+                  {{ social_icon_link('facebook', facebook, 'small', 'Follow ' ~ name ~ ' on Facebook') }}
+                </li>
+              {% endif %}
+
+              {% if twitter %}
+                <li>
+                  {{ social_icon_link('twitter', twitter, 'small', 'Follow ' ~ name ~ ' on Twitter') }}
+                </li>
+              {% endif %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro blog_post(post, type) %}
+  <div class="post post--{{ type }}">
+    <a class="post__link" href="{{ post.absolute_url }}">
+      {% if post.post_list_summary_featured_image %}
+        {% set postImage = {
+          src: post.post_list_summary_featured_image,
+          alt: post.featured_image_alt_text, 
+          width: 450,
+          height: 250
+        } %}
+        <div class="post__photo">
+          {{ picture(postImage, 450) }}
+        </div>
+      {% endif %}
+
+      <div class="post__content">
+        {% if post.tag_list %}
+          {% set found = { found: false } %}
+          {% for tagId in post.tag_ids %}
+            {% for tag in post.tag_list %}
+              {% if tagId == tag.id && !found.found %}
+                <span class="post__tag tag">{{ tag.name }}</span>
+                {% do found.update({ found: true }) %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+        <span class="post__title h5">{{ post.name }}</span>
+        {# <span class="post__snippet p small">{{ post.post_list_content|safe|striptags|truncate(150, false, '…') }}</span> #}
+        {# <span class="post__date">{{ post.publish_date|datetimeformat('%B %d, %Y') }}</span> #}
+        {# <span class="post__author">{{ post.blog_post_author.display_name }}</span> #}
+        <span class="post__read-more cta-link cta-link--chevron">Read More</span>
+      </div>
+    </a>
+  </div>
+{% endmacro %}
+
+{% macro blog_post_mini(post) %}
+  <div class="mini-post on-light">
+    <a class="mini-post__link" href="{{ post.absolute_url }}">
+      {% if post.post_list_summary_featured_image %}
+        {% set postImage = {
+          src: post.post_list_summary_featured_image,
+          alt: post.featured_image_alt_text, 
+          width: 200,
+          height: 200
+        } %}
+        <div class="mini-post__photo">
+          {{ picture(postImage, 200) }}
+        </div>
+      {% endif %}
+
+      <div class="mini-post__content">
+        <span class="mini-post__title h5">{{ post.name }}</span>
+        <span class="mini-post__date p small">{{ post.publish_date|datetimeformat('%B %d, %Y') }}</span>
+      </div>
+    </a>
+  </div>
+{% endmacro %}
+
+{% macro db_filter(module_name, table_id, filter) %}
+  {% set column_name = filter.column_name %}
+  {% set type = filter.display_type %}
+  {% set column = hubdb_table_column(table_id, column_name) %}
+  {% set filterLabel = filter.filter_label %}
+  {% set filterLabelId = filterLabel|lower|replace(' ', '-') %}
+
+  {% set options = [] %}
+
+  {% for option in column.options %}
+    {% do options.append(option.name) %}
+  {% endfor %}
+
+  {% if isBlog %}
+    {% if filter.blog_post_attribute == 'type' %}
+      {% do options.append('Blog Post') %}
+    {% elif filter.blog_post_attribute == 'tags' %}
+      {% for tag in blogTagsForFilters %}
+        {% do options.append(tag) %}
+      {% endfor %}
+      {% set options = options|unique|sort(false, true) %}
+    {% elif filter.blog_post_attribute == 'author' %}
+      {% for author in blogAuthorsForFilters %}
+        {% do options.append(author) %}
+      {% endfor %}
+      {% set options = options|unique|sort(false, true) %}
+    {% endif %}
+  {% endif %}
+
+  {% set isDropdown = type == 'dropdown' %}
+
+  <div class="{{ module_name }}__filter {{ module_name }}__filter">
+    <label class="{{ module_name }}__filter-label" {% if isDropdown %}for="{{ filterLabelId }}"{% else %}id="label-{{ filterLabelId }}"{% endif %}>
+      {{ filterLabel }}
+    </label>
+
+    <div class="{{ module_name }}__filter-field {{ module_name }}__filter-field--{{ type }}">
+      {% if isDropdown %}
+        <select class="{{ module_name }}__filter-input" name="{{ filterLabelId }}" id="{{ filterLabelId }}">
+          <option value="*" selected>{{ filter.all_options_text }}</option>
+
+          {% for option in options %}
+            <option value="{{ option|tojson|escape }}">{{ option }}</option>
+          {% endfor %}
+
+        </select>
+      {% elif type == 'radio' %}
+        <ul class="{{ module_name }}__filter-list">
+          <li class="{{ module_name }}__filter-list-item">
+            <label class="{{ module_name }}__filter-list-label hs-form-radio-display" for="{{ filterLabelId }}--option-0">
+              <input class="{{ module_name }}__filter-input" type="radio" name="{{ filterLabelId }}" id="{{ filterLabelId }}--option-0" value="*" aria-labelledby="label-{{ filterLabelId }}" checked>
+              <span class="{{ module_name }}__filter-input-label">{{ filter.all_options_text }}</span>
+            </label>
+          </li>
+          
+          {% for option in options %}
+            <li class="{{ module_name }}__filter-list-item">
+              <label class="{{ module_name }}__filter-list-label hs-form-radio-display" for="{{ filterLabelId }}--option-{{ loop.index }}">
+                <input class="{{ module_name }}__filter-input" type="radio" name="{{ filterLabelId }}" id="{{ filterLabelId }}--option-{{ loop.index }}" value="{{ option|tojson|escape }}" aria-labelledby="label-{{ filterLabelId }}">
+                <span class="{{ module_name }}__filter-input-label">{{ option }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      {% elif type == 'checkbox' %}
+        <ul class="{{ module_name }}__filter-list">
+          {% for option in options %}
+            <li class="{{ module_name }}__filter-list-item">
+              <label class="{{ module_name }}__filter-list-label hs-form-checkbox-display" for="{{ filterLabelId }}--option-{{ loop.index }}">
+                <input class="{{ module_name }}__filter-input" type="checkbox" name="{{ filterLabelId }}" id="{{ filterLabelId }}--option-{{ loop.index }}" value="{{ option|tojson|escape }}" aria-labelledby="label-{{ filterLabelId }}">
+                <span class="{{ module_name }}__filter-input-label">{{ option }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro tag_filter(module_name, blog_id, type) %}
+  {% set columnName = 'tag' %}
+  {% set options = blog_topics(blogId, 250) %}
+  {% set isDropdown = type == 'dropdown' %}
+
+  <div class="{{ module_name }}__filter {{ module_name }}__filter">
+    <label class="{{ module_name }}__filter-label" {% if isDropdown %}for="{{ columnName }}"{% else %}id="label-{{ columnName}}"{% endif %}>
+      Tag
+    </label>
+
+    <div class="{{ module_name }}__filter-field {{ module_name }}__filter-field--{{ type }}">
+      {% if isDropdown %}
+        <select class="{{ module_name }}__filter-input" name="{{ columnName}}" id="{{ columnName }}">
+          <option value="*" selected>- Select One -</option>
+
+          {% for option in options %}
+            <option value="{{ option.name|tojson|escape }}">{{ option.name }}</option>
+          {% endfor %}
+
+        </select>
+      {% elif type == 'radio' %}
+        <ul class="{{ module_name }}__filter-list">
+          <li class="{{ module_name }}__filter-list-item">
+            <label class="{{ module_name }}__filter-list-label" for="{{ columnName }}--option-0">
+              <input class="{{ module_name }}__filter-input" type="radio" name="{{ columnName }}" id="{{ columnName }}--option-0" value="*" aria-labelledby="label-{{ columnName }}" checked>
+              <span class="{{ module_name }}__filter-input-label">{{ filter.all_options_text }}</span>
+            </label>
+          </li>
+          
+          {% for option in options %}
+            <li class="{{ module_name }}__filter-list-item">
+              <label class="{{ module_name }}__filter-list-label" for="{{ columnName }}--option-{{ loop.index }}">
+                <input class="{{ module_name }}__filter-input" type="radio" name="{{ columnName }}" id="{{ columnName }}--option-{{ loop.index }}" value="{{ option.name|tojson|escape }}" aria-labelledby="label-{{ columnName }}">
+                <span class="{{ module_name }}__filter-input-label">{{ option.name }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      {% elif type == 'checkbox' %}
+        <ul class="{{ module_name }}__filter-list">
+       
+          {% for option in options %}
+            <li class="{{ module_name }}__filter-list-item">
+              <label class="{{ module_name }}__filter-list-label" for="{{ columnName }}--option-{{ loop.index }}">
+                <input class="{{ module_name }}__filter-input" type="checkbox" name="{{ columnName }}" id="{{ columnName }}--option-{{ loop.index }}" value="{{ option.name|tojson|escape }}" aria-labelledby="label-{{ columnName }}">
+                <span class="{{ module_name }}__filter-input-label">{{ option.name }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro endcap(capClass, settings) %}
+  {% set capContent = settings.content %}
+  {% set capWidth = settings.width %}
+  {% set capBlockAlignment = settings.block_alignment %}
+  {% set capTextAlignment = settings.text_alignment %}
+
+  <div class="module__section-{{ capClass }} module__section-{{ capClass }}--block-align-{{ capBlockAlignment }}">
+    <div class="module__section-{{ capClass }}-inner module__section-{{ capClass }}-inner--text-align-{{ capTextAlignment }} {{ capWidth }}">
+      {{ capContent }}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro accordion(item, index, settings) %}
+  {% set itemTitle = item.title %}
+  {% set itemContent = item.content %}
+  {% set itemExpanded = item.expand_by_default_ %}
+  {% set idBase = name + '__accordion-' + index %}
+  {% set icon = settings.accordion_icon || 'plus-minus' %}
+  {% set iconPlacement = settings.accordion_icon_placement || 'right' %}
+
+  <div class="accordion-item">
+    <dt class="accordion-item__header" role="heading">
+      <button class="accordion-item__trigger accordion-item__trigger--icon-{{ iconPlacement }}" id="{{ idBase }}-trigger" aria-expanded="{% if itemExpanded %}true{% else %}false{% endif %}" aria-controls="{{ idBase }}-body">
+        <span class="accordion-item__title h5">{{ itemTitle }}</span>
+        <span class="accordion-item__icon accordion-item__icon--{{ icon }}"></span>
+      </button>
+    </dt>
+  
+    <dd class="accordion-item__body" role="region" id="{{ idBase }}-body" aria-labelledby="{{ idBase }}-trigger" data-expanded="{% if itemExpanded %}true{% else %}false{% endif %}">
+      <div class="accordion-item__content">
+        {{ itemContent }}
+      </div>
+    </dd>
+  </div>
+{% endmacro %}
+
+{% macro accordions(settings) %}
+  {% set items = settings.accordions %}
+  {% set style = settings.accordion_style || 'bordered' %}
+  {% set scrollOnExpansion = settings.scroll_to_header_on_expansion_ || false %}
+
+  <dl class="accordions__list accordions__list--{{ style }}" data-scroll-on-expansion="{{ scrollOnExpansion }}">
+    {% for item in items %}
+      {{ accordion(item, loop.index, settings) }}
+    {% endfor %}
+  </dl>
+{% endmacro %}
+
+{% macro grid_column(item, imgWidth, style, cardContentColor) %}
+  {% set colContent = item.content %}
+  {% set colAlignment = item.text_alignment %}
+  {% set img = item.icon_image %}
+  {% set imgSrc = img.src %}
+  {% set imgAlt = img.alt %}
+  {% set link = item.link %}
+  {% set isLinked = link.url.href is truthy %}
+  {% set linkText = item.link_text %}
+  {% set elem = 'div' %}
+
+  {% if isLinked %}
+    {% set elem = 'a' %}
+  {% endif %}
+
+  {% if colContent || img %}
+    <div class="grid-column grid-column--{{ style }} {{ cardContentColor }}">
+      <{{ elem }} class="grid-column__inner{% if isLinked %} grid-column__inner--is-linked{% endif %}"{% if isLinked %} {{ linkattributes(link) }}{% endif %}>
+        {% if img.src %}
+          <div class="grid-column__image">
+            {% if imgWidth == 'icon' %}
+              {{ icon(img, 50) }}
+            {% else %}
+              {{ picture(img, 450) }}
+            {% endif %}
+          </div>
+        {% endif %}
+        
+        {% if style == 'bg-card' %}
+          <div class="grid-column__image-overlay"></div>
+        {% endif %}
+
+        <div class="grid-column__content">
+          {% if isLinked %}
+            {# Replace interior links with spans to prevent markup from breaking #}
+            {{ colContent|replace('<a ', '<span ')|replace('</a>', '</span>') }}
+          {% else %}
+            {{ colContent }}
+          {% endif %}
+        </div>
+
+        {% if isLinked && linkText %}
+          <div class="grid-column__link">
+            <div class="grid-column__link-inner">
+              <span class="grid-column__cta {% if style == 'bg-card' %}{% else %}cta-btn cta-btn--medium{% endif %}">{{ linkText }}</span>
+            </div>
+          </div>
+        {% endif %}
+      </{{ elem }}>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro image_underlay(settings) %}
+  {% set image = settings.background_image %}
+  {% set position = settings.background_image.background_position|lower|replace('_', '-') %}
+  {% set mode = settings.background_image.background_size %}
+  {% set hasFallback = settings.use_mobile_fallback_image_ %}
+  {% set fallback = settings.mobile_fallback_background_image %}
+  {% set fallbackPosition = settings.mobile_fallback_background_image.background_position|lower|replace('_', '-') %}
+  {% set fallbackMode = settings.mobile_fallback_background_image.background_size %}
+
+  {% if image.src %}
+    <picture class="module__underlay-image">
+      {% if hasFallback && fallback.src %}
+        {# Mobile smallest #}
+        <source media="(max-width: 360px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(fallback.src, 720) }}">
+        <source media="(max-width: 360px)" srcset="{{ resize_image_url(fallback.src, 360) }}">
+
+        {# Mobile smaller #}
+        <source media="(max-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(fallback.src, 960) }}">
+        <source media="(max-width: 480px)" srcset="{{ resize_image_url(fallback.src, 480) }}">
+
+        {# Mobile #}
+        <source media="(max-width: 767px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(fallback.src, 1534) }}">
+        <source media="(max-width: 767px)" srcset="{{ resize_image_url(fallback.src, 767) }}">
+      {% else %}
+        {# Mobile smallest #}
+        <source media="(max-width: 360px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 720) }}">
+        <source media="(max-width: 360px)" srcset="{{ resize_image_url(image.src, 360) }}">
+
+        {# Mobile smaller #}
+        <source media="(max-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 960) }}">
+        <source media="(max-width: 480px)" srcset="{{ resize_image_url(image.src, 480) }}">
+
+        {# Mobile #}
+        <source media="(max-width: 767px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 1534) }}">
+        <source media="(max-width: 767px)" srcset="{{ resize_image_url(image.src, 767) }}">
+      {% endif %}
+
+      {# Tablet #}
+      <source media="(max-width: 991px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 1982) }}">
+      <source media="(max-width: 991px)" srcset="{{ resize_image_url(image.src, 991) }}">
+
+      {# Laptop #}
+      <source media="(max-width: 1439px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 2878) }}">
+      <source media="(max-width: 1439px)" srcset="{{ resize_image_url(image.src, 1439) }}">
+
+      {# Desktop #}
+      <source media="(max-width: 1920px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 3200) }}">
+      <source media="(max-width: 1920px)" srcset="{{ resize_image_url(image.src, 1600) }}">
+
+      {# HD #}
+      <source media="(max-width: 1920px) and (-webkit-min-device-pixel-ratio: 1.5)" srcset="{{ resize_image_url(image.src, 3840) }}">
+      <source media="(max-width: 1920px)" srcset="{{ resize_image_url(image.src, 1920) }}">
+
+      {# Image element #}
+      <img class="module__underlay-image-element module__underlay-image-element--{{ position }} module__underlay-image-element--{{ mode }}{% if hasFallback && fallback %} module__underlay-image-element--mobile-fallback-{{ fallbackPosition }} module__underlay-image-element--mobile-fallback-{{ fallbackMode }}{% endif %}" src="{{ image.src }}" alt="background image" {% if modules|length > 1 %} loading="lazy"{% endif %} width="{{ image.width }}" height="{{ image.height }}">
+    </picture>
+  {% endif %}
+{% endmacro %}
+      
+{% macro overlay(settings) %}
+  {% set strength = settings.overlay_strength %}
+  {% set type = settings.overlay_type %}
+
+  <div class="module__overlay module__overlay--strength-{{ strength }} module__overlay--type-{{ type }}"></div>
+{% endmacro %}
+
+{% macro padding(modifier, topPadding, bottomPadding) %}{{ modifier }}padding-top-{{ topPadding }} {{ modifier }}padding-bottom-{{ bottomPadding }}{% endmacro %}
+
+{% macro simple_billboard(size, bg, content) %}
+  <div class="billboard module module--padding-{{ size }}">
+    {% if bg %}
+      <div class="module__underlay">
+        {% set underlaySettings = {
+          'background_image': {
+            'src': bg,
+           },
+          'background_image_position': 'middle-center',
+          'background_image_mode': 'fill',
+          'mobile_fallback_background_image': {
+            'src': '',
+           },
+        } %}
+        {{ image_underlay(underlaySettings) }}
+      </div>
+    
+      {% set overlaySettings = {
+        'overlay_strength': 'dark',
+        'overlay_type': 'solid',
+      } %}
+
+      {{ overlay(overlaySettings) }}
+    {% endif %}
+
+    <div class="module__inner constrain">
+      <div class="module__section-main module__section-main--block-align-center">
+        <div class="module__content module__content--text-align-center constrain--6">
+          <div class="billboard__content-inner">
+            <h1>{{ content }}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro tab_button(module_name, item, index, module_id) %}
+  {% set itemTitle = item.title %}
+  {% set idBase = module_id + '__tab-' + index %}
+
+  <button class="{{ module_name }}__tab" role="tab" aria-selected="{% if index == 1 %}true{% else %}false{% endif %}" aria-controls="{{ idBase }}-panel" tabindex="{% if index == 1 %}0{% else %}-1{% endif %}" id="{{ idBase }}-tab">
+    <div class="{{ module_name }}__tab-inner">
+      <span class="{{ module_name }}__tab-label">{{ itemTitle }}</span>
+    </div>
+  </button>
+{% endmacro %}
+
+{% macro tab_panel(module_name, item, index, module_id) %}
+  {% set itemContent = item.content %}
+  {% set idBase = module_id + '__tab-' + index %}
+
+  <div class="{{ module_name }}__panel" role="tabpanel" tabindex="0" aria-labelledby="{{ idBase }}-tab" id="{{ idBase }}-panel"{% if index > 1 %} hidden=""{% endif %}>
+    <div class="{{ module_name }}__panel-inner">
+      {{ itemContent }}
+    </div>
+  </div>
+{% endmacro %}
+      
+{% macro testimonial(settings) %}
+  {% set testimonialContent = settings.testimonial_content %}
+  {% set testimonialPhoto = settings.testimonial_citation_photo %}
+  {% set testimonialCitationName = settings.testimonial_citation_name %}
+  {% set testimonialCitationTitle = settings.testimonial_citation_title %}
+  {% set testimonialStyle = settings.testimonial_style %}
+  {% if testimonialStyle == 'boxed' || testimonialStyle == 'boxed-large' %}
+    {% set testimonialContentColor = 'on-light' %}
+  {% endif %}
+      
+  <div class="testimonial testimonial--{{ testimonialStyle }} {{ testimonialContentColor }}">
+    {% if testimonialContent != '' %}
+      <div class="testimonial__content">
+        {{ testimonialContent }}
+      </div>
+    {% endif %}
+
+    {% if testimonialPhoto.src || testimonialCitationName != '' || testimonialCitationTitle != '' %}
+      <div class="testimonial__citation">
+        <div class="testimonial__citation-inner">
+          {% if testimonialPhoto.src %}
+            <div class="testimonial__citation-photo">
+              {{ icon(testimonialPhoto, 50, 'cover') }}
+            </div>
+          {% endif %}
+  
+          {% if testimonialCitationName || testimonialCitationTitle %}
+            <span class="testimonial__citation-content h6">
+              {% if testimonialCitationName %}
+                <span class="testimonial__citation-name">{{ testimonialCitationName }}{% if testimonialCitationTitle != '' %},{% endif %}</span>
+              {% endif %}
+  
+              {% if testimonialCitationTitle %}
+                <span class="testimonial__citation-title">{{ testimonialCitationTitle }}</span>
+              {% endif %}
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+      
+{% macro column_block(column, module_name) %}
+  {% set type = column.column_type %}
+
+  {% if type == 'content' %}
+    {% set textContent = column.content.content %}
+    {% set appendedElements = column.appended_elements %}
+
+    <div class="column-block__content">
+      {{ textContent }}
+
+      {% for element in appendedElements %}
+        {% set elementType = element.element_type %}
+
+        {% if elementType == 'testimonial' %}
+          {% set testimonialSettings = element.testimonial %}
+
+          {{ testimonial(testimonialSettings) }}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% elif type == 'accordions' %}
+    {% set accordionSettings = column.accordions %}
+
+    {{ accordions(accordionSettings) }}
+  {% elif type == 'document' %}
+    {% set document = column.document.document %}
+    {% set orientation = column.document.orientation %}
+
+    <div class="column-block__document column-block__document--{{ orientation }}">
+      <object data="{{ document }}" type="application/pdf" width="100%" height="100%">
+        <p>This browser does not support PDFs. Please download the PDF to view it:</p>
+        <a class="cta-btn cta-btn--large" href="{{ document }}">Download PDF</a>
+      </object>
+    </div>
+  {% elif type == 'form' %}
+    {% set formTitle = column.form.form_title %}
+    {% set form = column.form.form %}
+    {% set drawBox = column.form.draw_box_around_form_ %}
+
+    <div class="column-block__form{% if drawBox %} column-block__form--boxed{% endif %}">
+      {% if formTitle %}
+        <h3>{{ formTitle }}</h3>
+      {% endif %}
+      {% form
+        form_to_use="{{ form.form_id }}"
+        response_response_type="{{ form.response_type }}"
+        response_message="{{ form.message }}"
+        response_redirect_id="{{ form.redirect_id }}"
+        response_redirect_url="{{ form.redirect_url }}"
+        gotowebinar_webinar_key="{{ form.gotowebinar_webinar_key }}"
+      %}
+    </div>
+  {% elif type == 'photo' %}
+    {% set photo = column.photo.photo %}
+    {% set photoLayout = column.photo.photo_layout %}
+    {% set expandToTop = column.photo.expand_to_module_top %}
+    {% set expandToBottom = column.photo.expand_to_module_bottom %}
+    {% set secondPhoto = column.photo.second_photo %}
+  
+    <div class="column-block__photo column-block__photo--{{ photoLayout }}{% if expandToTop %} column-block__photo--expand-to-top{% endif %}{% if expandToBottom %} column-block__photo--expand-to-bottom{% endif %}">
+      {% if module_name == 'one-column' %}
+        {% if photoLayout == 'screen-edge' %}
+          {{ picture(photo, 1920) }}
+        {% else %}
+          {{ picture(photo, 1280) }}
+          {% if photoLayout == 'two-photos' %}
+            {{ picture(secondPhoto, 1280) }}
+          {% endif %}
+        {% endif %}
+      {% else %}
+        {% if photoLayout == 'screen-edge' %}
+          {{ picture(photo, 960) }}
+        {% else %}
+          {{ picture(photo, 640) }}
+          {% if photoLayout == 'two-photos' %}
+            {{ picture(secondPhoto, 640) }}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
+  {% elif type == 'video' %}
+    {% set videoType = column.video.video_type %}
+    {% set videoEmbed = column.video.video_embed_code %}
+    {% set videoMp4 = column.video.video_mp4_file %}
+    {% set videoWebm = column.video.video_webm_file %}
+    {% set videoAspectRatio = column.video.video_aspect_ratio %}
+
+    <div class="column-block__video column-block__video--{{ videoType }} column-block__video--{{ videoAspectRatio }}">
+      {% if videoType == 'embed' %}
+        {{ videoEmbed }}
+      {% elif videoType == 'file' %}
+        <video class="column-block__video-player" controls>
+          {% if videoMp4 %}
+            <source src="{{ videoMp4 }}" type="video/mp4">
+          {% endif %}
+          
+          {% if videoWebm %}
+            <source src="{{ videoWebm }}" type="video/webm">
+          {% endif %}
+        </video>
+      {% endif %}
+    </div>
+  {% elif type == 'meeting' %}
+    {% set meeting = column.meeting %} 
+
+    <div class="column-block__meeting{% if offsetColumn %} column-block__column--offset column-block__column--offset-{{ offsetColumnSettings.offset || 'medium' }}{% endif %}">
+      {% if meeting.meeting %}
+        <div class="meetings-iframe-container" data-src="{{ meeting.meeting }}?embed=true"></div>
+        <script type="text/javascript" src="https://static.hsappstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"></script>
+      {% else %}
+        <div class="hs-meetings-placeholder">
+          <div class="hs-meetings-placeholder__inner">
+            <h3 class="hs-meetings-placeholder__title">{{ meeting.select_meeting_title }}</h3>
+            <p class="hs-meetings-placeholder__description">{{ meeting.select_meeting_description }}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% elif type == 'html' %}
+    <div class="column-block__html">
+      {{ column.html.html }}
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% macro resource_card(content, options) %} 
+  {% set title = content.title %}
+  {% set date = content.date %}
+  {% set author = content.author %}
+  {% set snippet = content.snippet %}
+  {% set tags = content.tags %}
+  {% set types = content.types %}
+  {% set link = content.link %}
+  {% set linkText = content.linkText %}
+  {% set newTab = content.newTab %}
+
+  {% if content.date %}
+    {% set date = content.date|format_date('medium') %}
+  {% endif %}
+
+  {% set image = {
+    src: content.image,
+    alt: title, 
+    width: 450,
+    height: 250
+  } %}
+
+  {% set el = 'div' %}
+  {% if link %}
+    {% set el = 'a' %}
+    {% set isLinked = true %}
+  {% endif %}
+
+  {% if content.hs_path %}
+    {% set el = 'a' %}
+    {% set isLinked = true %}
+    {% if dynamic_page_hubdb_row %}
+      {% set link = './'~content.hs_path %}
+    {% else %}
+      {% set link = request.full_url~'/'~content.hs_path %}
+    {% endif %}
+    {% set newTab = false %}
+  {% endif %}
+
+  <{{ el}} class="resource-card on-light{% if isLinked %} resource-card--is-linked{% endif %}"{% if isLinked %} href="{{ link }}"{% if newTab %} target="_blank"{% endif %}{% endif %}>
+
+    {% if options.show_image_ && image %}
+      <div class="resource-card__image">
+        {{ picture(image, 450) }}
+        {# <img src="{{ image }}" alt="{{ title }}"> #}
+      </div>
+    {% endif %}
+
+    <div class="resource-card__inner">
+      <div class="resource-card__content">
+
+        <div class="resource-card__content-top">
+          {% if options.show_type_ && types %}
+            <span class="resource-card__type">
+              {% if isBlogPost && resourceType == 'hubdb-blog' %}
+                {{ blogTypeLabel }} 
+              {% elif resourceType == 'blog' %}
+                {% for tag in tags %}
+                  {{ tag.name }}{% if !loop.last %}, {% endif %}
+                {% endfor %}
+              {% else %}
+                {% for type in types %}
+                  {{ type.name }}{% if !loop.last %}, {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
+          {% endif %}
+
+          {% if options.show_title_ && title %}
+            <span class="resource-card__title">
+              {{ title }}
+            </span>
+          {% endif %}
+
+          {% set showByline = isBlogPost && ((options.show_date_ && date) || (options.show_author_ && author)) %}
+          {% if showByline %}
+            <span class="resource-card__byline">
+              {% if options.show_date_ && date %}
+                <span class="resource-card__date">
+                  <i class="fa fa-calendar" aria-hidden="true"></i> {{ date }}
+                </span>
+              {% endif %}
+
+              {% if options.show_author_ && author %}
+                <span class="resource-card__author">
+                  <i class="fa fa-user" aria-hidden="true"></i> {{ author.display_name }}
+                </span>
+              {% endif %}
+            </span>
+          {% endif %}
+
+          {% if options.show_snippet_ && snippet %}
+            <span class="resource-card__snippet">
+              {{ snippet }}
+            </span>
+          {% endif %}
+
+        </div>
+            
+        <div class="resource-card__bottom">
+          {% if options.show_link_text_ && linkText %}
+            <div class="resource-card__actions">
+              <span class="cta-btn cta-btn--medium cta-btn--primary-fill">{{ linkText }}</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </{{ el}}>
+{% endmacro %}
+      
+{% macro video_underlay(settings) %}
+    {% set mp4Url = settings.background_video_mp4_file %}
+    {% set webmUrl = settings.background_video_webm_file %}
+    {% set position = settings.background_video_position %}
+    {% set poster = settings.background_video_poster_image.src %}
+
+    {% if mp4Url || webmUrl %}
+      <video class="module__underlay-video module__underlay-video--{{ position }}"{% if poster != '' %} poster="{{ poster }}"{% endif %} loop muted autoplay>
+        {% if mp4Url %}
+          <source src="{{ mp4Url }}" type="video/mp4">
+        {% endif %}
+
+        {% if webmUrl %}
+          <source src="{{ webmUrl }}" type="video/webm">
+        {% endif %}
+      </video>
+    {% endif %}
+{% endmacro %}
+
+{% macro background_layer(settings) %}
+  {% set bgType = settings.background_type %}
+  {% set bgImageSettings = settings.bg_image %}
+  {% set bgVideoSettings = settings.bg_video %}
+  {% set showOverlay = settings.overlay.show_overlay_ %}
+  {% set overlaySettings = settings.overlay %}
+
+  {% if bgType != 'color' %}
+    <div class="module__underlay" aria-hidden="true">
+      {% if bgType == 'image' %}
+        {{ image_underlay(bgImageSettings) }}
+      {% elif bgType == 'video' %}
+        {{ video_underlay(bgVideoSettings) }}
+      {% endif %}
+    </div>
+
+    {% if showOverlay %}
+      {{ overlay(overlaySettings) }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+{% macro module_base(moduleName, moduleSettings, additionalClasses) %}
+  {# Style #}
+  {% set moduleBehavior = moduleSettings.styles.module_behavior || 'constrain' %}
+  {% set contentWidth = moduleSettings.styles.content_width || 'constrain--12' %}
+
+  {% if module_name == 'cta-bar' && module.layout == 'two-column' %}
+    {% set contentWidth = 'constrain--12' %}
+  {% endif %}
+
+  {% set contentBlockAlignment = moduleSettings.styles.content_block_alignment || 'center' %}
+  {% set textAlignment = moduleSettings.styles.text_alignment || 'left' %}
+  {% set sectionPadding = padding(modifier || 'module--', moduleSettings.styles.top_padding || 'medium', moduleSettings.styles.bottom_padding || 'medium') %}
+  {% set contentColor = moduleSettings.styles.content_color %}
+  {% if contentColor == 'on-light' %}
+    {% set contentColor = '' %}
+  {% endif %}
+  {% set contentBoxColor = moduleSettings.styles.content_box_color %}
+  {% if contentBoxColor is truthy && contentBoxColor != 'transparent' %}
+    {% set contentBoxColor = background_color(modifier || 'module--', contentBoxColor) ~ ' module__content--boxed' %}
+  {% else %}
+    {% set contentBoxColor = false %}
+  {% endif %}
+  {% set contentBoxInnerWidth = moduleSettings.styles.content_box_inner_width %}
+  {% set bgColor = background_color(modifier || 'module--', moduleSettings.styles.background_color) %}
+  {% set bgSettings = {
+    background_type: moduleSettings.styles.background_type,
+    bg_image: moduleSettings.styles.bg_image,
+    bg_video: moduleSettings.bg_video,
+    overlay: moduleSettings.styles.overlay
+  } %}
+
+  {# Header #}
+  {% set showSectionHeader = moduleSettings.section_header.show_section_header_ %}
+  {% set sectionHeaderSettings = moduleSettings.section_header.section_header %}
+
+  {# Footer #}
+  {% set showSectionFooter = moduleSettings.section_footer.show_section_footer_ %}
+  {% set sectionFooterSettings = moduleSettings.section_footer.section_footer %}
+
+  {# Images #}
+  {% set isScreenEdgeLeft = moduleSettings.columns[0].photo.align_to_screen_edge %}
+  {% set isScreenEdgeRight = moduleSettings.columns[1].photo.align_to_screen_edge %}
+
+  <div class="{{ moduleName }} {{ additionalClasses }} module {{ sectionPadding }} {{ contentColor }} {{ bgColor }}">
+
+    {{ background_layer(bgSettings) }}
+
+    <div class="module__inner {{ moduleBehavior }}">
+      {% if showSectionHeader %}
+        {{ endcap('header', sectionHeaderSettings) }}
+      {% endif %}
+
+      <div class="module__section-main module__section-main--block-align-{{ contentBlockAlignment }}">
+        <div class="module__content module__content--text-align-{{ textAlignment }} {{ contentWidth }} {{ contentBoxColor }}">
+          {% if contentBoxColor %}
+            <div class="module__content-inner constrain {{ contentBoxInnerWidth }}">
+          {% endif %}
+              {{ caller() }}
+          {% if contentBoxColor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if showSectionFooter %}
+        {{ endcap('footer', sectionFooterSettings) }}
+      {% endif %}
+    </div>
+  </div>
+  {% do modules.append(1) %}
+{% endmacro %}
+
+{# STYLE GUIDE #}
+
+{% macro style_guide_header(title) %}<div class="{{ module_name }}__group-heading"><h2>{{ title }}</h2></div>{% endmacro %}
+{% macro color_set(class) %}{% if 'primary' in class %}primary{% elif 'secondary' in class %}secondary{% elif 'tertiary' in class %}tertiary{% elif 'accent' in class %}accent{% elif 'hover' in class || 'pressed' in class %}action{% endif %}{% endmacro %}
+{% macro color_set_rank(class) %}{% if 'primary' in class %}1{% elif 'secondary' in class %}2{% elif 'tertiary' in class %}3{% elif 'accent' in class %}4{% elif 'hover' in class || 'pressed' in class %}5{% else %}999{% endif %}{% endmacro %}
+{% macro color_on_dark(class) %}{% if 'on_dark' in class %}on-dark{% elif 'primary' in class || 'secondary' in class %}zhover{% else %}*{% endif %}{% endmacro %}
+
+{% macro color_card(label, class, color, overlaySettings) %}
+  {% set hexCode = color.color %}
+  {% if overlaySettings %}
+    {% set overlayClass = 'module__overlay module__overlay--strength-'~overlaySettings.strength~' module__overlay--type-'~overlaySettings.type %}
+  {% endif %}
+  <div class="{{ module_name }}__color">
+    <div class="{{ module_name }}__color-swatch">
+      <div{% if hexCode %} style="background-color: {{ hexCode }}"{% endif %}{% if overlayClass %} class="{{ overlayClass }}"{% endif %}></div>
+    </div>
+    <div class="{{ module_name }}__color-label">{{ label }}{% if hexCode %}<small>{{ color.color }}</small>{% endif %}</div>
+  </div>
+{% endmacro %}
+
+{% macro style_card(label, class) %}
+  <div class="{{ module_name }}__style">
+    <div class="{{ module_name }}__style-swatch module--{{ class }}">
+    </div>
+    <div class="{{ module_name }}__style-label">{{ label }}</div>
+  </div>
+{% endmacro %}
+
+{% macro style_guide_color_group(groupLabel, items) %}
+  {% set colors = [] %}
+  {% set color_labels = items|split('=, ') %}
+
+  {% for label in color_labels %}
+    {% set class = label|cut('{')|cut('}')|cut('=') %}
+
+    {% if 'content' in groupLabel|lower || 'interaction' in groupLabel|lower %}
+      {% set set = color_on_dark(class) %}
+      {% if 'on_dark' in class %}
+        {% set rank = 2 %}
+      {% else %}
+        {% set rank = 1 %}
+      {% endif %}
+    {% else %}
+      {% set set = color_set(class) || 'main' %}
+      {% set rank = color_set_rank(class) %}
+    {% endif %}
+
+    {% set item = {
+      'set': set,
+      'rank': rank,
+      'label': class|replace('_',' ')|capitalize,
+      'class': class|replace('_','-'),
+      'color': items[class]
+    } %}
+
+    {% do colors.append(item) %}
+  {% endfor %}
+
+  <div class="{{ module_name }}__group">
+    <div class="{{ module_name }}__group-header">
+      <h3>{{ groupLabel }}</h3>
+    </div>
+    <div class="{{ module_name }}__group-grid">
+      {% for group in colors|sort(false, false, 'rank')|groupby('set') %}
+        <div data-group="{{ group.grouper }}" class="style-guide__color-set style-guide__color-set--{% if group.grouper == 'main' %}flex{% else %}stacked{% endif %}{% if group.grouper == 'on-dark' %} module--bg-dark on-dark{% endif %}">
+          {% for item in group.list|sort(false, false, 'rank') %}
+            {{ color_card(item.label, item.class, item.color) }}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro style_guide_style_group(label, items, cardType) %}
+  <div class="{{ module_name }}__group">
+    <div class="{{ module_name }}__group-header">
+      <h3>{{ label }}</h3>
+    </div>
+    <div class="{{ module_name }}__group-grid">
+      <div class="{{ module_name }}__{{ cardType }}-set {{ module_name }}__color-set--flex">
+        {% for item in items %}
+          {% if cardType == 'color' %}
+            {% if 'overlay' in label|lower %}
+              {% if 'light' in item|lower %}
+                {% set overlayStrength = 'light' %}
+              {% elif 'medium' in item|lower %}
+                {% set overlayStrength = 'medium' %}
+              {% elif 'dark' in item|lower %}
+                {% set overlayStrength = 'dark' %}
+              {% endif %}
+              {% if 'gradient' in item|lower %}
+                {% set overlayType = 'gradient' %}
+              {% else %}
+                {% set overlayType = 'solid' %}
+              {% endif %}
+              {% set overlaySettings = {
+                'strength': overlayStrength,
+                'type': overlayType
+              } %}
+              {{ color_card(item, item|replace(' ','-')|lower, item|replace(' ','-')|lower, overlaySettings) }}
+            {% else %}
+              {{ color_card(item, item|replace(' ','-')|lower, item|replace(' ','-')|lower) }}
+            {% endif %}
+          {% elif cardType == 'style' %}
+            {{ style_card(item, item|replace(' ','-')|lower) }}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro style_guide_markup_generator(label, group, placeholderText) %}
+  <div class="{{ module_name }}__markup-generator">
+    <p class="h5">{{ label }}</p> 
+    <div class="{{ module_name }}__markup-generator-input">
+      <div class="{{ module_name }}__input-box" data-input-target="{{ group }}">{{ placeholderText }}</div>
+      <button class="{{ module_name }}__copy-markup copy-markup" data-copy-target="{{ group }}">Copy</button>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro location_fields(locationType, newOrEdit) %}
+  {% set edit = newOrEdit == 'edit' %}
+  {% set statesArr = [
+    {code: 'AL', name: 'Alabama'},
+    {code: 'AK', name: 'Alaska'},
+    {code: 'AZ', name: 'Arizona'},
+    {code: 'AR', name: 'Arkansas'},
+    {code: 'CA', name: 'California'},
+    {code: 'CO', name: 'Colorado'},
+    {code: 'CT', name: 'Connecticut'},
+    {code: 'DE', name: 'Delaware'},
+    {code: 'DC', name: 'District Of Columbia'},
+    {code: 'FL', name: 'Florida'},
+    {code: 'GA', name: 'Georgia'},
+    {code: 'HI', name: 'Hawaii'},
+    {code: 'ID', name: 'Idaho'},
+    {code: 'IL', name: 'Illinois'},
+    {code: 'IN', name: 'Indiana'},
+    {code: 'IA', name: 'Iowa'},
+    {code: 'KS', name: 'Kansas'},
+    {code: 'KY', name: 'Kentucky'},
+    {code: 'LA', name: 'Louisiana'},
+    {code: 'ME', name: 'Maine'},
+    {code: 'MD', name: 'Maryland'},
+    {code: 'MA', name: 'Massachusetts'},
+    {code: 'MI', name: 'Michigan'},
+    {code: 'MN', name: 'Minnesota'},
+    {code: 'MS', name: 'Mississippi'},
+    {code: 'MO', name: 'Missouri'},
+    {code: 'MT', name: 'Montana'},
+    {code: 'NE', name: 'Nebraska'},
+    {code: 'NV', name: 'Nevada'},
+    {code: 'NH', name: 'New Hampshire'},
+    {code: 'NJ', name: 'New Jersey'},
+    {code: 'NM', name: 'New Mexico'},
+    {code: 'NY', name: 'New York'},
+    {code: 'NC', name: 'North Carolina'},
+    {code: 'ND', name: 'North Dakota'},
+    {code: 'OH', name: 'Ohio'},
+    {code: 'OK', name: 'Oklahoma'},
+    {code: 'OR', name: 'Oregon'},
+    {code: 'PA', name: 'Pennsylvania'},
+    {code: 'RI', name: 'Rhode Island'},
+    {code: 'SC', name: 'South Carolina'},
+    {code: 'SD', name: 'South Dakota'},
+    {code: 'TN', name: 'Tennessee'},
+    {code: 'TX', name: 'Texas'},
+    {code: 'UT', name: 'Utah'},
+    {code: 'VT', name: 'Vermont'},
+    {code: 'VA', name: 'Virginia'},
+    {code: 'WA', name: 'Washington'},
+    {code: 'WV', name: 'West Virginia'},
+    {code: 'WI', name: 'Wisconsin'},
+    {code: 'WY', name: 'Wyoming'}
+  ] %}
+
+  {# {% if edit %}
+    <input id="location_id" name="location_id" type="hidden" value="{{ dynamic_page_crm_object.id }}">
+  {% endif %} #}
+  {# <input id="contact_id" name="contact_id" type="hidden" value="{{ contact.id }}"> #}
+  {# <input id="company_id" name="company_id" type="hidden" value="{{ contact.associatedcompanyid }}"> #}
+  <div class="modal__form-field">
+    <label for="property_name" class="modal__form-label">{{ locationType }} Name*</label>
+    <input id="property_name" name="property_name" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_name }}"{% else %}placeholder="{{ locationType }} Name"{% endif %} required>
+  </div>
+  <div class="modal__form-field">
+    <label for="property_address" class="modal__form-label">{{ locationType }} Address*</label>
+    <input id="property_address" name="property_address" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_address }}"{% else %}placeholder="1234 Some Street"{% endif %} required>
+  </div>
+  <div class="modal__form-field">
+    <label for="property_address_2" class="modal__form-label">{{ locationType }} Address 2</label>
+    <input id="property_address_2" name="property_address_2" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_address_2 }}"{% else %}placeholder=""{% endif %}>
+  </div>
+  <div class="modal__form-field-group">
+    <div class="modal__form-field column--50">
+      <label for="property_city" class="modal__form-label">City*</label>
+      <input id="property_city" name="property_city" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_city }}"{% else %}placeholder="City Name"{% endif %} required>
+    </div>
+    <div class="modal__form-field column--25">
+      <label for="property_state" class="modal__form-label">State*</label>
+      {# <input id="property_state" name="property_state" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_state }}"{% else %}placeholder="State"{% endif %}> #}
+      <select id="property_state" name="property_state" class="modal__form-input" required>
+        <option value="" disabled{% if !edit %} selected{% endif %}>State</option>
+        {% for state in statesArr %}
+          <option value="{{ state.code }}"{% if edit && dynamic_page_crm_object.property_state == state.code %} selected{% endif %}>{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="modal__form-field column--25">
+      <label for="property_zip_code" class="modal__form-label">Zip*</label>
+      <input id="property_zip_code" name="property_zip_code" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_zip_code }}"{% else %}placeholder="12345"{% endif %} required>
+    </div>
+  </div>
+  <div class="modal__form-field">
+    {% set billingMethodOptions = crm_property_definition('properties', 'billing_method') %}
+    <label for="billing_method">Billing Method*</label>
+    <select name="billing_method" id="billing_method" type="date" class="modal__form-input" required>
+      <option value="" disabled{% if !edit || !dynamic_page_crm_object.billing_method %} selected{% endif %}>Choose</option>
+      {% for option in billingMethodOptions.options %}
+        <option value="{{ option.value }}"{% if edit && dynamic_page_crm_object.billing_method == option.value %} selected{% endif %}>{{ option.label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="modal__form-field">
+    <label for="property_date_opened">Date Opened</label>
+    <p class="xsmall">Input the planned opening date if not already open</p>
+    {% if dynamic_page_crm_object.property_date_opened %}
+      {% set dateOpened = dynamic_page_crm_object.property_date_opened|format_date('yyyy-MM-dd') %}
+    {% else %}
+      {% set dateOpened = null %}
+    {% endif %}
+    <input name="property_date_opened" id="property_date_opened" type="date" class="modal__form-input"{% if edit %}value="{{ dateOpened }}"{% endif %}>
+  </div>
+  <div class="modal__form-field">
+    <label for="property_url" class="modal__form-label">{{ locationType }} URL*</label>
+    <input id="property_url" name="property_url" type="text" class="modal__form-input" {% if edit %}value="{{ dynamic_page_crm_object.property_url }}"{% else %}placeholder="www.example.com"{% endif %} required>
+  </div>
+  <div class="modal__form-field">
+    <label for="property_notes">Notes</label>
+    <textarea name="property_notes" id="property_notes" cols="30" rows="10" class="modal__form-input">{% if edit && dynamic_page_crm_object.property_notes %}{{ dynamic_page_crm_object.property_notes|trim }}{% endif %}</textarea>
+  </div>
+{% endmacro %}
+
+{% macro location_modal(newOrEdit) %}
+  {% set edit = newOrEdit == 'edit' %}
+
+  <div id="{% if newOrEdit == 'new' %}new-location{% else %}edit-location{% endif %}" class="modal modal--location">
+    <div class="modal__bg"></div>
+    <form id="location-form" class="modal__inner">
+      <div class="modal__header">
+        <h2 class="h4">{{ newOrEdit|title }} {{ locationType }}</h2>
+        <button class="modal__close modal__close--x" type="button">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="modal__body modal__body--location">
+        <h3>{{ locationType }} Details</h3>
+        {{ location_fields(locationType, newOrEdit) }}
+      </div>
+      <div class="modal__footer">
+        <button class="modal__close modal__close--button cta-btn cta-btn--medium cta-btn--gray" type="button">Cancel</button>
+        <button class="modal__submit cta-btn cta-btn--medium cta-btn--primary" type="submit">{% if newOrEdit == 'new' %}Create{% else %}Update{% endif %}</button>
+      </div>
+    </form>
+  </div>
+{% endmacro %}
+
+{% macro pricing_card(settings, startOrSelect, setupProperties, defaultAddonGroups, defaultAddonsTitle) %}
+  {% set cardIndex = loop.index %}
+
+  {# pricingRow is a global variable that is set in mjtw-base.html #}
+  {% set specialPrice = pricingRow[settings.hs_sku|lower|replace('-', '_')] %}
+  {% set price = specialPrice || settings.price %}
+  {% if specialPrice == 0 %}
+    {% set price = specialPrice %}
+  {% endif %}
+
+
+  {% set cardSetupSpecialPrice = pricingRow[setupProperties.hs_sku|lower|replace('-', '_')] %}
+  {% set cardSetupPrice = cardSetupSpecialPrice || setupProperties.price || 0 %}
+  {% if cardSetupSpecialPrice == 0 %}
+    {% set cardSetupPrice = cardSetupSpecialPrice %}
+  {% endif %}
+
+  {% set cardData = {
+    price: price
+  } %}
+  {% if startOrSelect == 'start' %}
+    {% for group in defaultAddonGroups %}
+      {% for addon in group.add_on_products %}
+        {% if addon.select_by_default %}
+          {% do cardData.update({
+            price: cardData.price + addon.product.properties.price
+          }) %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  
+  <div class="pricing-card pricing-card--{{ startOrSelect }}" data-objectid="{{ settings.hs_object_id }}" data-monthly="{{ price }}" data-setup-id="{{ setupProperties.hs_object_id }}" data-setup-fee="{{ cardSetupPrice }}">
+    <span class="pricing-card__label h6">{{ settings.short_label }}</span>
+    <span class="pricing-card__price h2">$<span class="pricing-card__price-inner" data-price="{{ price }}">{{ cardData.price }}</span>{% if settings.recurringbillingfrequency == 'monthly' %}/mo{% endif %}</span>
+    <div class="pricing-card__description">
+      {{ settings.card_description }}
+    </div>
+    {% if defaultAddonGroups %}
+      <div class="pricing-card__addons">
+        <div class="pricing-card__addon-info">
+          <span id="default-addon-label" class="h3"><strong>{{ defaultAddonsTitle }}</strong></span>
+          <a href="#service-details">See details</a>
+        </div>
+        {% for group in defaultAddonGroups %}
+          <div class="pricing-card__addon-group">
+            {% for addon in group.add_on_products %}
+              {% set properties = addon.product.properties %}
+              {% set addonSpecialPrice = pricingRow[properties.hs_sku|lower|replace('-', '_')] %}
+              {% set addonPrice = addonSpecialPrice || properties.price %}
+              {% if addonSpecialPrice == 0 %}
+                {% set addonPrice = addonSpecialPrice %}
+              {% endif %}
+              <label for="{{ cardIndex }}-{{ properties.hs_object_id }}" class="pricing-card__addon">
+                <input class="pricing-card__addon-input" type="checkbox" id="{{ cardIndex }}-{{ properties.hs_object_id }}" data-objectid="{{ properties.hs_object_id }}" data-name="{{ properties.name }}" data-monthly="{{ addonPrice }}" data-setup-id="{{ properties.setup_fee.hs_object_id }}" data-setup-fee="{{ properties.setup_fee.price || 0 }}" {{ addon.select_by_default ? 'checked' : '' }}>
+                <span class="pricing-card__addon-label">{{ properties.short_label }}</span>
+                <span class="pricing-card__addon-price">${{ addonPrice }}{% if properties.recurringbillingfrequency == 'monthly' %}/mo{% endif %}</span>
+              </label>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <{% if startOrSelect == 'start' %}a href="/new-subscription"{% else %}button{% endif %} class="pricing-card__button cta-btn cta-btn--regular cta-btn--pricing-card">
+      {% if startOrSelect == 'start' %}
+        Start a Subscription
+      {% elif startOrSelect == 'select' %}
+        Select
+      {% endif %}
+    </{% if startOrSelect == 'start' %}a{% else %}button{% endif %}>
+  </div>
+{% endmacro %}
+
+{% macro pricing_card_v2(settings, startOrSelect, setupProperties, defaultAddonGroups, defaultAddonsTitle) %}
+  {% set cardIndex = loop.index %}
+
+  {# pricingRow is a global variable that is set in mjtw-base.html #}
+  {% set specialPrice = pricingRow[settings.hs_sku|lower|replace('-', '_')] %}
+  {% set price = specialPrice || settings.price %}
+  {% if specialPrice == 0 %}
+    {% set price = specialPrice %}
+  {% endif %}
+
+
+  {% set cardSetupSpecialPrice = pricingRow[setupProperties.hs_sku|lower|replace('-', '_')] %}
+  {% set cardSetupPrice = cardSetupSpecialPrice || setupProperties.price || 0 %}
+  {% if cardSetupSpecialPrice == 0 %}
+    {% set cardSetupPrice = cardSetupSpecialPrice %}
+  {% endif %}
+
+  {% set cardData = {
+    price: price
+  } %}
+  {% if startOrSelect == 'start' %}
+    {% for group in defaultAddonGroups %}
+      {% for addon in group.add_on_products %}
+        {% if addon.select_by_default %}
+          {% do cardData.update({
+            price: cardData.price + addon.product.properties.price
+          }) %}
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+  
+  <div class="pricing-card pricing-card--v2 pricing-card--{{ startOrSelect }}" data-objectid="{{ settings.hs_object_id }}" data-monthly="{{ price }}" data-setup-id="{{ setupProperties.hs_object_id }}" data-setup-fee="{{ cardSetupPrice }}">
+    <div class="pricing-card__column">
+      <span class="pricing-card__label h6">{{ settings.short_label }}</span>
+      <span class="pricing-card__price h2">$<span class="pricing-card__price-inner" data-price="{{ price }}">{{ cardData.price }}</span>{% if settings.recurringbillingfrequency == 'monthly' %}/mo{% endif %}</span>
+      <{% if startOrSelect == 'start' %}a href="/new-subscription"{% else %}button{% endif %} class="pricing-card__button cta-btn cta-btn--regular cta-btn--pricing-card">
+        {% if startOrSelect == 'start' %}
+          Start a Subscription
+        {% elif startOrSelect == 'select' %}
+          Select
+        {% endif %}
+      </{% if startOrSelect == 'start' %}a{% else %}button{% endif %}>
+    </div>
+    <div class="pricing-card__column">
+      <div class="pricing-card__description">
+        {{ settings.card_description }}
+      </div>
+    </div>
+    <div class="pricing-card__column">
+      {% if defaultAddonGroups %}
+        <div class="pricing-card__addons">
+          <div class="pricing-card__addon-info">
+            <span id="default-addon-label" class="pricing-card__addon-title h3"><strong>{{ defaultAddonsTitle }}</strong></span>
+            <a href="#service-details">See details</a>
+          </div>
+          {% for group in defaultAddonGroups %}
+            <div class="pricing-card__addon-group">
+              {% for addon in group.add_on_products %}
+                {% set properties = addon.product.properties %}
+                {% set addonSpecialPrice = pricingRow[properties.hs_sku|lower|replace('-', '_')] %}
+                {% set addonPrice = addonSpecialPrice || properties.price %}
+                {% if addonSpecialPrice == 0 %}
+                  {% set addonPrice = addonSpecialPrice %}
+                {% endif %}
+                <label for="{{ cardIndex }}-{{ properties.hs_object_id }}" class="pricing-card__addon">
+                  <input class="pricing-card__addon-input" type="checkbox" id="{{ cardIndex }}-{{ properties.hs_object_id }}" data-objectid="{{ properties.hs_object_id }}" data-name="{{ properties.name }}" data-monthly="{{ addonPrice }}" data-setup-id="{{ properties.setup_fee.hs_object_id }}" data-setup-fee="{{ properties.setup_fee.price || 0 }}" {{ addon.select_by_default ? 'checked' : '' }}>
+                  <span class="pricing-card__addon-label">{{ properties.short_label }}</span>
+                  <span class="pricing-card__addon-price">${{ addonPrice }}{% if properties.recurringbillingfrequency == 'monthly' %}/mo{% endif %}</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro pricing_row(properties, setupProperties, columns, selectionType, title, preSelect) %}
+  {# pricingRow is a global variable that is set in mjtw-base.html #}
+  {% set rowSpecialPrice = pricingRow[properties.hs_sku|lower|replace('-', '_')] %}
+  {% set rowPrice = rowSpecialPrice || properties.price %}
+  {% if rowSpecialPrice == 0 %}
+    {% set rowPrice = rowSpecialPrice %}
+  {% endif %}
+
+  {% set setupSpecialPrice = pricingRow[setupProperties.hs_sku|lower|replace('-', '_')] %}
+  {% set setupPrice = setupSpecialPrice || setupProperties.price %}
+  {% if setupSpecialPrice == 0 %}
+    {% set setupPrice = setupSpecialPrice %}
+  {% endif %}
+  <div class="pricing-table__row{% if loop.first && preSelect %} selected{% endif %}">
+    {% if selectionType %}
+      <div class="pricing-table__cell pricing-table__cell--input">
+        <input type="checkbox" data-title="{{ title }}"
+          {% if properties.short_label %} data-package="{{ properties.short_label }}"{% endif %}
+          data-objectid="{{ properties.hs_object_id }}"
+          data-monthly="{{ rowPrice }}"
+          data-setup-id="{{ setupProperties.hs_object_id }}"
+          data-setup-fee="{{ setupPrice || 0 }}"
+          {% if loop.first && preSelect %} checked{% endif %}>
+      </div>
+    {% endif %}
+    {% if 'package' in columns %}
+      <div class="pricing-table__cell">
+        <span class="pricing-table__row-label">{{ properties.short_label }}</span>
+      </div>
+    {% endif %}
+    {% if 'cost' in columns %}
+      <div class="pricing-table__cell">
+        <span class="pricing-table__cell-solo">${{ rowPrice }}{% if properties.recurringbillingfrequency == 'monthly' %} / mo{% endif %}</span>
+      </div>
+    {% endif %}
+    {% if 'deliverables' in columns %}
+      <div class="pricing-table__cell">
+        <span class="pricing-table__cell-label">{{ properties.deliverables_label }}</span>
+        <span class="pricing-table__cell-description">{{ properties.deliverables_description }}</span>
+      </div>
+    {% endif %}
+    {% if 'services-included' in columns %}
+      <div class="pricing-table__cell">
+        <span class="pricing-table__cell-label">{{ properties.services_included_label }}</span>
+        <span class="pricing-table__cell-description">{{ properties.services_included_description }}</span>
+      </div>
+    {% endif %}
+    {# {% for column in columns %}
+      <div class="pricing-table__cell">
+        {% if column == 'package' %}
+          <span class="pricing-table__row-label">{{ properties.short_label }}</span>
+        {% elif column == 'cost' %}
+          <span class="pricing-table__cell-solo">${{ properties.price }}{% if properties.recurringbillingfrequency == 'monthly' %} / mo{% endif %}</span>
+        {% elif column == 'deliverables' %}
+          <span class="pricing-table__cell-label">{{ properties.deliverables_label }}</span>
+          <span class="pricing-table__cell-description">{{ properties.deliverables_description }}</span>
+        {% elif column == 'services-included' %}
+          <span class="pricing-table__cell-label">{{ properties.services_included_label }}</span>
+          <span class="pricing-table__cell-description">{{ properties.services_included_description }}</span>
+        {% endif %}
+      </div>
+    {% endfor %} #}
+  </div>
+{% endmacro %}
+
+{% macro pricing_table(settings, selectionType) %}
+  {% set title = settings.table_title %}
+  {% set description = settings.table_description %}
+  {% set columns = settings.display_columns %}
+  {% set preSelect = settings.pre_select_first_product_ %}
+  {% set products = settings.products %}
+
+  <div class="pricing-table{% if selectionType %} pricing-table--{{ selectionType }}{% endif %}">
+    <span class="pricing-table__headline h5">{{ title }}</span>
+    {{ description }}
+    {% if settings.conditional_messages %}
+      <div class="pricing-table__conditional-messages">
+        {% for message in settings.conditional_messages %}
+          {% if message.message %}
+            {% set messageText = message.message %}
+            {% set messageColor = message.message_color %}
+            {% set messageIcon = message.icon %}
+            {% set messageDisplayLogic = message.display_logic %}
+            {% set messageDisplayProducts = message.display_products %}
+
+            {% set messageProducts = [] %}
+            {% for item in messageDisplayProducts %}
+              {% do messageProducts.append(item.id) %}
+            {% endfor %}
+
+            <div class="pricing-table__conditional-message pricing-table__conditional-message--{{ messageColor }} active" data-display="{{ messageDisplayLogic }}" data-products="{{ messageProducts }}">
+              <span class="pricing-table__conditional-message-icon material-symbols-rounded">{{ message.icon }}</span>
+              <div class="pricing-table__conditional-message-text">
+                {{ messageText }}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="pricing-table__table">
+      <div class="pricing-table__header">
+        {% if selectionType %}
+          <div class="pricing-table__th pricing-table__th--input"></div>
+        {% endif %}
+        {% if 'package' in columns %}
+          <div class="pricing-table__th">Package</div>
+        {% endif %}
+        {% if 'cost' in columns %}
+          <div class="pricing-table__th">Cost</div>
+        {% endif %}
+        {% if 'deliverables' in columns %}
+          <div class="pricing-table__th">Deliverables</div>
+        {% endif %}
+        {% if 'services-included' in columns %}
+          <div class="pricing-table__th">Services Included</div>
+        {% endif %}
+        {# {% for column in columns %}
+          <div class="pricing-table__th">{{ column|replace('-', ' ')|title }}</div>
+        {% endfor %} #}
+      </div>
+      {% for product in products %}
+        {{ pricing_row(product.product.properties, product.setup_fee.properties, columns, selectionType, title, preSelect) }}
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro subscription_table(subscriptions) %}
+  <div class="subscription-table">
+    <div class="subscription-table__header">
+      <div class="subscription-table__th">Name</div>
+      <div class="subscription-table__th">Status</div>
+      <div class="subscription-table__th">Cost</div>
+      <div class="subscription-table__th">Start Date</div>
+      <div class="subscription-table__th">View / Edit</div>
+    </div>
+    <div class="subscription-table__body">
+      {% for subscription in subscriptions %}
+        {% set pipleineStatusNum = 'a' ~ subscription.hs_pipeline_stage|string %}
+        {% set subscriptionStatus = ticketStatusValues[pipleineStatusNum] %}
+        <div class="subscription-table__row">
+          <div class="subscription-table__cell">{{ subscription.subject }}</div>
+          <div class="subscription-table__cell subscription-table__cell--{{ subscriptionStatus.class }}" style="--content: 'Status';">
+            <span class="material-symbols-rounded">{{ subscriptionStatus.icon }}</span> {{ subscriptionStatus.label }}
+          </div>
+          <div class="subscription-table__cell" style="--content: 'Cost';">{{ subscription.monthly_price }}</div>
+          <div class="subscription-table__cell" style="--content: 'Start Date';">{{ subscription.campaign_start_date }}</div>
+          <div class="subscription-table__cell">
+            <a class="subscription-table__link" href="/subscriptions/{{ subscription.id }}">
+              {% if subscriptionStatus.editLabel %}
+                <span class="subscription-table__link-label">{{ subscriptionStatus.editLabel }}</span>
+              {% endif %}
+              <span class="material-symbols-rounded">{{ subscriptionStatus.editIcon }}</span>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro user_modal(newOrEdit) %}
+  {% set edit = newOrEdit == 'edit' %}
+
+  <div id="{{ newOrEdit }}-user" class="modal modal--user">
+    <div class="modal__bg"></div>
+    <form id="{{ newOrEdit }}-user-form" class="modal__inner">
+      <div class="modal__header">
+        <h2 class="h4">{{ newOrEdit|title }} User</h2>
+        <button class="modal__close modal__close--x" type="button">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="modal__body modal__body--location">
+        <div class="modal__form-field-group">
+          <div class="modal__form-field column--50">
+            <label for="firstname" class="modal__form-label">First Name*</label>
+            <input id="firstname" name="firstname" type="text" class="modal__form-input" {% if edit %}value=""{% else %}placeholder="Firstname"{% endif %} required>
+          </div>
+          <div class="modal__form-field column--50">
+            <label for="lastname" class="modal__form-label">Last Name*</label>
+            <input id="lastname" name="lastname" type="text" class="modal__form-input" {% if edit %}value=""{% else %}placeholder="Lastname"{% endif %} required>
+          </div>
+        </div>
+        <div class="modal__form-field">
+          <label for="email" class="modal__form-label">Email*</label>
+          <input id="email" name="email" type="email" class="modal__form-input" {% if edit %}value=""{% else %}placeholder="firstlastname@companyurl.com"{% endif %} required>
+        </div>
+        <div class="modal__form-field">
+          <label for="phone" class="modal__form-label">Phone</label>
+          <input id="phone" name="phone" type="tel" class="modal__form-input" {% if edit %}value=""{% else %}placeholder="555-123-5555"{% endif %}>
+        </div>
+      </div>
+      <div class="modal__footer">
+        {% if edit %}
+          <button class="modal__delete cta-btn cta-btn--medium cta-btn--negative" type="button">
+            <span class="material-symbols-rounded">delete</span>
+            Remove User
+          </button>
+        {% endif %}
+        <button class="modal__close modal__close--button cta-btn cta-btn--medium cta-btn--gray" type="button">Cancel</button>
+        <button class="modal__submit cta-btn cta-btn--medium cta-btn--primary" type="submit">{% if newOrEdit == 'new' %}Add{% else %}Update{% endif %}</button>
+      </div>
+    </form>
+  </div>
+{% endmacro %}
+
+{% macro modal(modalId, formId, modalTitle, formClass) %}
+  <div id="{{ modalId }}" class="modal">
+    <div class="modal__bg"></div>
+    <form id="{{ formId }}" class="modal__inner {{ formClass }}">
+      <div class="modal__header">
+        <h2 class="h4">{{ modalTitle }}</h2>
+        <button class="modal__close modal__close--x" type="button">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      <div class="modal__body">
+        {{ caller() }}
+      </div>
+      <div class="modal__footer">
+        <button class="modal__close modal__close--button cta-btn cta-btn--medium cta-btn--gray" type="button">Cancel</button>
+        <button class="modal__submit cta-btn cta-btn--medium cta-btn--primary" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+{% endmacro %}

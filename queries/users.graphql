@@ -1,0 +1,29 @@
+# $contactEmail: "{{ contact.email }}"
+query MyQuery($contactEmail: String!) {
+  CRM {
+    contact(uniqueIdentifier: "email", uniqueIdentifierValue: $contactEmail) {
+      email
+      hs_object_id
+      associations {
+        company_collection__primary {
+          items {
+            name
+            hs_object_id
+            pricing
+            associations {
+              contact_collection__company_to_contact(limit: 500) {
+                items {
+                  firstname
+                  lastname
+                  email
+                  phone
+                  hs_avatar_filemanager_key
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

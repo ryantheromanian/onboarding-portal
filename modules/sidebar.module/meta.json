@@ -1,0 +1,11 @@
+{
+  "global" : true,
+  "content_types" : [ "LANDING_PAGE", "SITE_PAGE" ],
+  "smart_type" : "NOT_SMART",
+  "host_template_types" : [ "PAGE" ],
+  "module_id" : 128155059585,
+  "data_query_path" : "../../queries/sidebar",
+  "label" : "Sidebar",
+  "icon" : "https://www.mediajunction.com/hubfs/mjtw/icons/sidebar-menu.svg",
+  "is_available_for_new_content" : false
+}

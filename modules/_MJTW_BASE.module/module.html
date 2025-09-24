@@ -1,0 +1,21 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  module_base,
+  testimonial,
+%}
+
+{# Base naming #}
+{% set module_name = 'base-module' %}
+{% set modifier = ' module--' %}
+
+{# Testimonial #}
+{% set showTestimonial = module.show_optional_testimonial_ %}
+{% set testimonialSettings = module.testimonial %}
+
+{# Module-specific options #}
+
+{# Markup #}
+{% call module_base(module_name, module) %}
+  {% if showTestimonial %}
+    {{ testimonial(testimonialSettings) }}
+  {% endif %}
+{% endcall %}

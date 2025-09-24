@@ -1,0 +1,19 @@
+query MyQuery {
+  CRM {
+    contact(uniqueIdentifier: "email", uniqueIdentifierValue: "will.brueske@mediajunction.com") {
+      email
+      associations {
+        p_properties_collection__property_to_contact {
+          items {
+            property_address
+            property_address_2
+            property_city
+            property_date_opened
+            property_image
+            property_name
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+# $contactEmail: "{{ contact.email }}"
+query MyQuery($contactEmail: String!) {
+  CRM {
+    contact(uniqueIdentifier: "email", uniqueIdentifierValue: $contactEmail) {
+      associations {
+        company_collection__primary {
+          items {
+            associations {
+              ticket_collection__company_to_ticket(filter: {hs_pipeline__eq: "47446804", geofencing_complete__neq: true}, limit: 500) {
+                items {
+                  hs_object_id
+                  subject
+                  geofence_total_selected
+                  hs_lastmodifieddate
+                  associations {
+                    p_properties_collection__property_to_ticket {
+                      items {
+                        property_image
+                        property_address
+                        property_address_2
+                        property_city
+                        property_state
+                        property_zip_code
+                      }
+                    }
+                    deal_collection__ticket_to_deal {
+                      items {
+                        associations {
+                          line_item_collection__primary {
+                            items {
+                              name
+                              short_label
+                              geofence_limit
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

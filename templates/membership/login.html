@@ -1,0 +1,24 @@
+<!--
+  templateType: membership_login_page
+  isAvailableForNewContent: true
+  label: Onboarding Login
+-->
+{% extends '../layouts/mjtw-login-base.html' %}
+
+{% block membership_content %}
+  <h1>Login</h1>
+
+  {% member_login 'login_form'
+    extra_classes='form-wrapper form-wrapper--membership-login',
+    email_label='Email',
+    password_label='Password',
+    remember_me_label='Remember me',
+    reset_password_text='Forgot password?',
+    submit_button_text='Login',
+    show_password='Show'
+  %}
+
+  {# <p>
+    Having trouble? <a href="{{ 'mailto:' ~ site_settings.membershipWebsiteAdmin }}">Contact the site's administrator</a>
+  </p> #}
+{% endblock membership_content %}

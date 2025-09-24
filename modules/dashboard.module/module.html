@@ -1,0 +1,74 @@
+{% from '/onboarding-portal/modules/mjtw_partials.html' import
+  linkattributes,
+%}
+
+{# Module-specific options #}
+{% set subscriptions = module.data_query.data.CRM.contact.associations.company_collection__primary.items[0].associations.ticket_collection__company_to_ticket.items %}
+{% set introContent = module.intro_content %}
+{% set quickActions = module.quick_actions %}
+
+{# Markup #}
+<div class="module">
+  <div class="constrain">
+    <div class="dashboard__sections constrain--8">
+      <section>
+        <div class="card">
+          <div class="card__header">
+            <h1 class="h4">Welcome Back, {{ contact.firstname }}!</h1>
+          </div>
+          <div class="card__body">
+            {{ introContent }}
+            <div class="dashboard__quick-actions">
+              {% for action in quickActions %}
+                <a class="cta-btn cta-btn--regular cta-btn--quick-action" {{ linkattributes(action.link) }}>{{ action.link_text }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+      {# {{ subscriptions }} #}
+      {% if subscriptions|length > 0 %}
+        <section>
+          <h2 class="h3">Jump back in...</h2>
+          {% for subscription in subscriptions %}
+            {% set location = subscription.associations.p_properties_collection__property_to_ticket.items[0] %}
+            {% set lineItems = subscription.associations.deal_collection__ticket_to_deal.items[0].associations.line_item_collection__primary.items %}
+            {% set products = {
+              package: null,
+              addOns: [],
+            } %}
+            
+            {% for lineItem in lineItems %}
+              {% if lineItem.name is string_containing 'Package' %}
+                {% do products.update({'package': lineItem}) %}
+              {% else %}
+                {% do products.addOns.append(lineItem) %}
+              {% endif %}
+            {% endfor %}
+
+            <a class="subscription-card card" href="/subscriptions/{{ subscription.hs_object_id }}">
+              {% if location.property_image %}
+                <img class="subscription-card__image" src="{{ location.property_image }}" alt="">
+              {% endif %}
+              <div class="subscription-card__content">
+                <h3 class="subscription-card__title h5">{{ subscription.subject }}</h3>
+                <p class="subscription-card__address small">
+                  {{ location.property_address }}
+                  {% if location.property_address_2 %}
+                    <br>{{ location.property_address_2 }}
+                  {% endif %}
+                  <br>{{ location.property_city }}, {{ location.property_state.label }} {{ location.property_zip_code }}
+                </p>
+                <div class="subscription-card__tags">
+                  <div class="tag">{{ products.package.short_label }}</div>
+                  <div class="tag">{{ subscription.geofence_total_selected || 0 }}/{{ products.package.geofence_limit || 'Unlimted' }} Targets</div>
+                </div>
+                <span class="subscription-card__last-modified">Last modified: {{ subscription.hs_lastmodifieddate|format_datetime('short', local_time_zone) }}</span>
+              </div>
+            </a>
+          {% endfor %}
+        </section>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+{# Module-specific options #}
+{% set locationCount = module.data_query.data.CRM.contact.associations.p_properties_collection__property_to_contact.items|length %}
+{% set contactOwner = module.data_query.data.CRM.contact.hubspot_owner_id %}
+
+
+{# Markup #}
+<div class="sidebar">
+  <div class="sidebar__headline">
+    <span class="sidebar__headline-element h4">{{ pageSettings.sidebar_label }}</span>
+    <button class="sidebar__menu-trigger">
+      <span class="material-symbols-rounded menu">menu</span>
+      <span class="material-symbols-rounded close">chevron_left</span>
+    </button>
+  </div>
+  <div class="sidebar__menu">
+    {% menu id=128872701580, flow='vertical', flyouts=false, no_wrapper=true %}
+  </div>
+  {% set activeRep = false %}
+  {% if activeCompany.client_success_representative %}
+    {% set activeRep = activeCompany.client_success_representative %}
+  {% endif %}
+  <div class="sidebar__owner" data-active-rep="{{ activeRep ? activeRep : '' }}">
+    {# {% if contactOwner %}
+      <div class="sidebar__owner-card">
+        <img class="sidebar__owner-card-image" src="https://via.placeholder.com/72" alt="Owner Image">
+        <div class="sidebar__owner-card-info">
+          <span class="sidebar__owner-card-name">{{ contactOwner.firstname }} {{ contactOwner.lastname }}</span>
+          <span class="sidebar__owner-card-title">Account Manager</span>
+          <div class="sidebar__owner-card-links">
+            <a class="sidebar__owner-card-link" href="mailto:{{ contactOwner.email }}">
+              <span class="material-symbols-rounded">mail</span>
+              <span>Email</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endif %} #}
+  </div>
+  <div class="sidebar__promo">
+    
+  </div>
+</div>

@@ -1,0 +1,219 @@
+[ {
+  "id" : "intro_content",
+  "name" : "intro_content",
+  "label" : "Intro Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h1>Let’s get your property signed up.</h1><p>Don’t worry. If you can’t get through everything in one sitting you can save your progress and pick up where you left off.</p>"
+}, {
+  "picker" : "file",
+  "id" : "intro_video",
+  "name" : "intro_video",
+  "label" : "Intro Video",
+  "required" : false,
+  "locked" : false,
+  "type" : "file",
+  "display_width" : null,
+  "default" : "https://7954923.fs1.hubspotusercontent-na1.net/hubfs/7954923/Apartment%20Explainer%20Video.mp4"
+}, {
+  "id" : "location_info",
+  "name" : "location_info",
+  "label" : "Location Info",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h6>Did you know?</h6><p class=\"small\">Helpful content can go here to better guide the user through the onboarding process.</p>"
+}, {
+  "id" : "product_cards",
+  "name" : "product_cards",
+  "label" : "Product Cards",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 4
+  },
+  "object_type" : "PRODUCT",
+  "type" : "crmobject",
+  "display_width" : null,
+  "default" : [ {
+    "id" : 2202519366
+  }, {
+    "id" : 2202495025
+  }, {
+    "id" : 2202534499
+  }, {
+    "id" : 2202535497
+  } ]
+}, {
+  "id" : "legacy_product_cards",
+  "name" : "legacy_product_cards",
+  "label" : "Legacy Product Cards",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 4
+  },
+  "object_type" : "PRODUCT",
+  "type" : "crmobject",
+  "display_width" : null,
+  "default" : [ {
+    "id" : 2202519366
+  }, {
+    "id" : 2202495025
+  }, {
+    "id" : 2202534499
+  }, {
+    "id" : 2202535497
+  } ]
+}, {
+  "id" : "add_on_tables",
+  "name" : "add_on_tables",
+  "label" : "Add-on Tables",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : 3
+  },
+  "children" : [ {
+    "id" : "add_on_tables.enable_conditional_logic",
+    "name" : "enable_conditional_logic",
+    "label" : "Enable Conditional Logic",
+    "required" : false,
+    "locked" : false,
+    "display" : "toggle",
+    "type" : "boolean",
+    "display_width" : null,
+    "default" : true
+  }, {
+    "id" : "add_on_tables.conditional_logic_title",
+    "name" : "conditional_logic_title",
+    "label" : "Conditional Logic Title",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Do you need design services?"
+  }, {
+    "id" : "add_on_tables.conditional_logic_decline_info_label",
+    "name" : "conditional_logic_decline_info_label",
+    "label" : "Conditional Logic Decline Info Label",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Artwork Upload"
+  }, {
+    "id" : "add_on_tables.conditional_logic_decline_info_description",
+    "name" : "conditional_logic_decline_info_description",
+    "label" : "Conditional Logic Decline Info Description",
+    "required" : false,
+    "locked" : false,
+    "visibility" : {
+      "controlling_field" : "add_on_tables.enable_conditional_logic",
+      "controlling_field_path" : null,
+      "controlling_value_regex" : "true",
+      "property" : null,
+      "operator" : "EQUAL",
+      "access" : null
+    },
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "You’ll be able to upload your artwork during Subscription setup"
+  }, {
+    "id" : "add_on_tables.table_title",
+    "name" : "table_title",
+    "label" : "Table Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Banner Ad Design"
+  }, {
+    "id" : "add_on_tables.display_columns",
+    "name" : "display_columns",
+    "label" : "Display Columns",
+    "required" : false,
+    "locked" : false,
+    "display" : "checkbox",
+    "choices" : [ [ "package", "Package" ], [ "cost", "Price" ], [ "deliverables", "Deliverables" ], [ "services-included", "Services Included" ] ],
+    "multiple" : true,
+    "reordering_enabled" : false,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : [ "package", "cost", "deliverables", "services-included" ]
+  }, {
+    "id" : "add_on_tables.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 1
+    },
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null,
+    "default" : [ {
+      "id" : 2202525725
+    } ]
+  }, {
+    "id" : "add_on_tables.legacy_products",
+    "name" : "legacy_products",
+    "label" : "Legacy Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 1
+    },
+    "object_type" : "PRODUCT",
+    "type" : "crmobject",
+    "display_width" : null,
+    "default" : [ {
+      "id" : 2202525725
+    } ]
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null
+} ]

@@ -1,0 +1,14 @@
+# $location_id = "{{ dynamic_page_crm_object.hs_object_id }}"
+query MyQuery($location_id: String!) {
+  CRM {
+    p_properties(uniqueIdentifier: "hs_object_id", uniqueIdentifierValue: $location_id) {
+      associations {
+        company_collection__property_to_company {
+          items {
+            name
+          }
+        }
+      }
+    }
+  }
+}

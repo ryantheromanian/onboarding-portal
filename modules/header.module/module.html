@@ -1,0 +1,67 @@
+{% set headerSettings = widget_data.global_settings.site_header %}
+{% set logoUrl = headerSettings.logo_url || '/' %}
+{% set userMenu = module.user_menu %}
+{% set contactCompanies = module.data_query.data.CRM.contact.associations.company_collection__contact_to_company_unlabeled.items %}
+{% set activeCompanyId = module.data_query.data.CRM.contact.active_company %}
+{% if activeCompanyId %}
+  {% set activeCompany = contactCompanies|selectattr('hs_object_id', 'eq', activeCompanyId) %}
+  {% set activeCompany = activeCompany[0] %}
+{% else %}
+  {% set activeCompany = contactCompanies|selectattr('hs_object_id', 'eq', contact.associatedcompanyid) %}
+  {% set activeCompany = activeCompany[0] %}
+{% endif %}
+
+<header class="header" role="banner" data-test="{{ activeCompany|tojson|escape_html }}">
+  <div class="header__logo">
+    <button class="header__logo-trigger">
+      <img class="header__logo-image" src="{{ theme.logos.apartment_geofencing.src }}" alt="{{ theme.logos.apartment_geofencing.alt }}" width="{{ theme.logos.apartment_geofencing.width }}" height="{{ theme.logos.apartment_geofencing.height }}">
+    </button>
+    <div class="header__logo-list">
+    </div>
+  </div>
+  <div class="header__user-menu">
+    <button class="header__user-menu-trigger dropdown-trigger" data-dropdown-target="user-menu">
+      <span class="header__user-menu-photo small">{{ contact.firstname|list|first }}{{ contact.lastname|list|first }}</span>
+      <span class="header__user-menu-name">{{ contact.firstname }}</span>
+    </button>
+    <div class="header__user-menu-list card" data-dropdown-id="user-menu">
+      <div class="card__header">
+        <span class="header__user-menu-photo">{{ contact.firstname|list|first }}{{ contact.lastname|list|first }}</span>
+        <div>
+          <span class="header__user-menu-name">{{ contact.firstname ~ ' ' ~ contact.lastname }}</span>
+          {% if contactCompanies|length > 1 %}
+            <span class="p xsmall mb0">{{ activeCompany.name }}</span>
+            {# <a class="header__user-menu-company modal-trigger" data-modal="company-switcher">Switch company</a> #}
+          {% endif %}
+        </div>
+        {% if contactCompanies|length > 1 %}
+          <button class="header__user-menu-company modal-trigger" data-modal="company-switcher" title="Switch company">
+            <span class="material-symbols-rounded">change_circle</span>
+          </button>
+        {% endif %}
+      </div>
+      <div class="header__main-menu card__body">
+        {% menu id=131555405946, flow='vertical', flyouts=false, no_wrapper=true %}
+      </div>
+      <div class="header__secondary-menu card__footer">
+
+      </div>
+    </div>
+  </div>
+</header>
+<div id="company-switcher" class="modal modal--company-switcher">
+  <div class="modal__bg"></div>
+  <div class="modal__inner">
+    <div class="modal__header">
+      <h2 class="h4">Switch Company</h2>
+      <button class="modal__close modal__close--x" type="button">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+    </div>
+    <div class="modal__body">
+      {% for company in contactCompanies %}
+        <button class="modal__company-selector company-switcher" data-company-id="{{ company.hs_object_id }}">{{ company.name }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</div>

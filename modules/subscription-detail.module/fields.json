@@ -1,0 +1,698 @@
+[ {
+  "id" : "geofencing_settings",
+  "name" : "geofencing_settings",
+  "label" : "Geofencing Settings",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "geofencing_settings.geofencing_intro_text",
+    "name" : "geofencing_intro_text",
+    "label" : "Geofencing Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "geofencing_settings.map_intro_text",
+    "name" : "map_intro_text",
+    "label" : "Map Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<p>Type in a keyword to begin your search, e.g., \"Apartments\". Be sure to include competitor locations, points of interest (POI) and workplaces. We recommend allocating at least 50% of your geofences to competitor properties.</p><p><strong>Unlimited Packages: </strong>We recommend at least 40 geofences on the unlimited package. Yes, that's a lot! If you need help, just add a few and press 'Submit' and then select 'Choose the rest for me'.</p><p><strong>Have your geofence targets ready in an Excel or CSV file? Send them over to clientsuccess@apartmentgeofencing.com, and your dedicated Client Success Representative will be alerted promptly!</strong></p>"
+  }, {
+    "id" : "geofencing_settings.csv_intro_text",
+    "name" : "csv_intro_text",
+    "label" : "CSV Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "geofencing_settings.cfm_intro_text",
+    "name" : "cfm_intro_text",
+    "label" : "Choose For Me Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null
+  }, {
+    "id" : "geofencing_settings.cfm_checkbox_label",
+    "name" : "cfm_checkbox_label",
+    "label" : "Choose For Me Checkbox Label",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Choose my geofence targets for me"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : {
+    "map_intro_text" : "<p>Type in a keyword to begin your search, e.g., \"Apartments\". Be sure to include competitor locations, points of interest (POI) and workplaces. We recommend allocating at least 50% of your geofences to competitor properties.</p><p><strong>Unlimited Packages: </strong>We recommend at least 40 geofences on the unlimited package. Yes, that's a lot! If you need help, just add a few and press 'Submit' and then select 'Choose the rest for me'.</p><p><strong>Have your geofence targets ready in an Excel or CSV file? Send them over to clientsuccess@apartmentgeofencing.com, and your dedicated Client Success Representative will be alerted promptly!</strong></p>",
+    "cfm_checkbox_label" : "Choose my geofence targets for me"
+  }
+}, {
+  "id" : "intelligence_report_settings",
+  "name" : "intelligence_report_settings",
+  "label" : "Intelligence Report Settings",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "intelligence_report_settings.intelligence_report_label",
+    "name" : "intelligence_report_label",
+    "label" : "Intelligence Report Label",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "GeofenceiQ™ Advanced Prospect Intelligence Report"
+  }, {
+    "id" : "intelligence_report_settings.intelligence_report_intro_text",
+    "name" : "intelligence_report_intro_text",
+    "label" : "Intelligence Report Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h3>Select Competitors</h3>"
+  }, {
+    "id" : "intelligence_report_settings.manual_competitor_entry_intro_text",
+    "name" : "manual_competitor_entry_intro_text",
+    "label" : "Manual Competitor Entry Intro Text",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h3>Enter Competitors</h3><p>Add competitor information here to use in your GeofenceiQ™ Advanced Prospect Intelligence Report."
+  }, {
+    "id" : "intelligence_report_settings.manual_competitor_entry_backup_intro_text",
+    "name" : "manual_competitor_entry_backup_intro_text",
+    "label" : "Manual Competitor Entry Backup Intro Text",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 0
+    },
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h3>Backup Competitors</h3><p>Please enter at least one competitor to use as a backup.</p>"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : {
+    "intelligence_report_label" : "GeofenceiQ™ Advanced Prospect Intelligence Report",
+    "intelligence_report_intro_text" : "<h3>Select Competitors</h3>",
+    "manual_competitor_entry_intro_text" : "<h3>Enter Competitors</h3><p>Add competitor information here to use in your GeofenceiQ™ Advanced Prospect Intelligence Report.",
+    "manual_competitor_entry_backup_intro_text" : "<h3>Backup Competitors</h3><p>Please enter at least one competitor to use as a backup.</p>"
+  }
+}, {
+  "id" : "sections",
+  "name" : "sections",
+  "label" : "Sections (Client Assets)",
+  "inline_help_text" : "These sections have settings to display based on products selected by the client.",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : "sections.section_title",
+    "default" : 1
+  },
+  "children" : [ {
+    "id" : "sections.products",
+    "name" : "products",
+    "label" : "Products",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : null
+    },
+    "object_type" : "PRODUCT",
+    "properties_to_fetch" : [ "hs_sku", "name" ],
+    "type" : "crmobject",
+    "display_width" : null
+  }, {
+    "id" : "sections.section_display",
+    "name" : "section_display",
+    "label" : "Section Display",
+    "required" : false,
+    "locked" : false,
+    "display" : "radio",
+    "choices" : [ [ "products-present", "Display if any Products are Present" ], [ "products-not-present", "Display if all Products are Not Present" ] ],
+    "multiple" : false,
+    "reordering_enabled" : true,
+    "preset" : null,
+    "type" : "choice",
+    "display_width" : null,
+    "default" : "products-present"
+  }, {
+    "id" : "sections.section_title",
+    "name" : "section_title",
+    "label" : "Section Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Artwork: Brand Assets"
+  }, {
+    "id" : "sections.section_icon",
+    "name" : "section_icon",
+    "label" : "Section Icon",
+    "inline_help_text" : "<a href=\"https://fonts.google.com/icons?icon.style=Rounded\">Find Google Material Symbol icons here</a>",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "<span class=\"material-symbols-rounded\">upload</span>"
+  }, {
+    "id" : "sections.section_help_text_title",
+    "name" : "section_help_text_title",
+    "label" : "Section Help Text Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Need Help?"
+  }, {
+    "id" : "sections.section_help_text",
+    "name" : "section_help_text",
+    "label" : "Section Help Text",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Helpful content can go here to better guide the user through the onboarding process."
+  }, {
+    "id" : "sections.section_completed_property",
+    "name" : "section_completed_property",
+    "label" : "Section Completed Property",
+    "inline_help_text" : "This ticket property will be set to true when the section is completed.",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "property_brand_assets_collected"
+  }, {
+    "id" : "sections.fields",
+    "name" : "fields",
+    "label" : "Fields",
+    "required" : false,
+    "locked" : false,
+    "occurrence" : {
+      "min" : null,
+      "max" : null,
+      "sorting_label_field" : null,
+      "default" : 1
+    },
+    "children" : [ {
+      "id" : "sections.fields.field_title",
+      "name" : "field_title",
+      "label" : "Field Title",
+      "required" : false,
+      "locked" : false,
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "Logo(s)"
+    }, {
+      "id" : "sections.fields.ticket_property_name",
+      "name" : "ticket_property_name",
+      "label" : "Ticket Property Name",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "video-options",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "assets_logo"
+    }, {
+      "id" : "sections.fields.video_length_ticket_property_name",
+      "name" : "video_length_ticket_property_name",
+      "label" : "Video Length Ticket Property Name",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "video-options",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "video_length"
+    }, {
+      "id" : "sections.fields.video_orientation_ticket_property_name",
+      "name" : "video_orientation_ticket_property_name",
+      "label" : "Video Orientation Ticket Property Name",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "video-options",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : "video_orientation"
+    }, {
+      "id" : "sections.fields.field_type",
+      "name" : "field_type",
+      "label" : "Field Type",
+      "required" : false,
+      "locked" : false,
+      "display" : "select",
+      "choices" : [ [ "text", "Text" ], [ "textarea", "Multi-line Text" ], [ "radio", "Radio" ], [ "video-options", "Video Options" ], [ "file", "File" ], [ "skip-section", "Skip Section" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "type" : "choice",
+      "display_width" : null,
+      "default" : "file"
+    }, {
+      "id" : "sections.fields.skip_label",
+      "name" : "skip_label",
+      "label" : "Skip Label",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "skip-section",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null
+    }, {
+      "id" : "sections.fields.video_durations",
+      "name" : "video_durations",
+      "label" : "Video Durations",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : 4
+      },
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "video-options",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "children" : [ {
+        "id" : "sections.fields.video_durations.duration",
+        "name" : "duration",
+        "label" : "Duration",
+        "required" : false,
+        "locked" : false,
+        "allow_new_line" : false,
+        "type" : "text",
+        "display_width" : null,
+        "default" : "6s"
+      }, {
+        "id" : "sections.fields.video_durations.applicable_orientations",
+        "name" : "applicable_orientations",
+        "label" : "Applicable Orientations",
+        "required" : false,
+        "locked" : false,
+        "display" : "checkbox",
+        "choices" : [ [ "landscape", "Landscape" ], [ "portrait", "Portrait" ] ],
+        "multiple" : true,
+        "reordering_enabled" : false,
+        "preset" : null,
+        "type" : "choice",
+        "display_width" : null,
+        "default" : [ "landscape", "portrait" ]
+      } ],
+      "tab" : "CONTENT",
+      "expanded" : false,
+      "group_occurrence_meta" : null,
+      "type" : "group",
+      "display_width" : null,
+      "default" : [ {
+        "duration" : "6s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "15s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "30s",
+        "applicable_orientations" : [ "landscape" ]
+      }, {
+        "duration" : "60s",
+        "applicable_orientations" : [ "landscape" ]
+      } ]
+    }, {
+      "id" : "sections.fields.radio_options",
+      "name" : "radio_options",
+      "label" : "Radio Options",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : 1
+      },
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "radio",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null,
+      "default" : [ "No Preference" ]
+    }, {
+      "id" : "sections.fields.file_share_link_property_name",
+      "name" : "file_share_link_property_name",
+      "label" : "File Share Link Property Name",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "file",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null
+    }, {
+      "id" : "sections.fields.file_usage_choices",
+      "name" : "file_usage_choices",
+      "label" : "File Usage Choices",
+      "inline_help_text" : "Use the titles of other sections (must match exactly).  These choices will be displayed in a dropdown when the user uploads a file, and the text will be added to the file name.",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "file",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "allow_new_line" : false,
+      "type" : "text",
+      "display_width" : null
+    }, {
+      "id" : "sections.fields.mark_as_required",
+      "name" : "mark_as_required",
+      "label" : "Mark As Required",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.field_type",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "skip-section",
+        "property" : null,
+        "operator" : "NOT_EQUAL",
+        "access" : null
+      },
+      "display" : "checkbox",
+      "type" : "boolean",
+      "display_width" : null,
+      "default" : false
+    }, {
+      "id" : "sections.fields.field_help_text",
+      "name" : "field_help_text",
+      "label" : "Field Help Text",
+      "required" : false,
+      "locked" : false,
+      "type" : "richtext",
+      "display_width" : null,
+      "default" : "<p class=\"small\">Property logo and any other logos that should be included (management company, etc.) EPS or PNG format preferred.</p>"
+    }, {
+      "id" : "sections.fields.enable_conditional_display_options",
+      "name" : "enable_conditional_display_options",
+      "label" : "Enable Conditional Display Options",
+      "required" : false,
+      "locked" : false,
+      "display" : "toggle",
+      "type" : "boolean",
+      "display_width" : null,
+      "default" : false
+    }, {
+      "id" : "sections.fields.products",
+      "name" : "products",
+      "label" : "Products",
+      "required" : false,
+      "locked" : false,
+      "occurrence" : {
+        "min" : null,
+        "max" : null,
+        "sorting_label_field" : null,
+        "default" : null
+      },
+      "visibility" : {
+        "controlling_field" : "sections.fields.enable_conditional_display_options",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "object_type" : "PRODUCT",
+      "properties_to_fetch" : [ "hs_sku", "name" ],
+      "type" : "crmobject",
+      "display_width" : null
+    }, {
+      "id" : "sections.fields.field_display",
+      "name" : "field_display",
+      "label" : "Field Display",
+      "required" : false,
+      "locked" : false,
+      "visibility" : {
+        "controlling_field" : "sections.fields.enable_conditional_display_options",
+        "controlling_field_path" : null,
+        "controlling_value_regex" : "true",
+        "property" : null,
+        "operator" : "EQUAL",
+        "access" : null
+      },
+      "display" : "radio",
+      "choices" : [ [ "products-present", "Display if any Products are Present" ], [ "products-not-present", "Display if all Products are Not Present" ] ],
+      "multiple" : false,
+      "reordering_enabled" : true,
+      "preset" : null,
+      "type" : "choice",
+      "display_width" : null,
+      "default" : "products-present"
+    } ],
+    "tab" : "CONTENT",
+    "expanded" : false,
+    "group_occurrence_meta" : null,
+    "type" : "group",
+    "display_width" : null,
+    "default" : [ {
+      "field_title" : "Logo(s)",
+      "ticket_property_name" : "assets_logo",
+      "video_length_ticket_property_name" : "video_length",
+      "video_orientation_ticket_property_name" : "video_orientation",
+      "field_type" : "file",
+      "video_durations" : [ {
+        "duration" : "6s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "15s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "30s",
+        "applicable_orientations" : [ "landscape" ]
+      }, {
+        "duration" : "60s",
+        "applicable_orientations" : [ "landscape" ]
+      } ],
+      "radio_options" : [ "No Preference" ],
+      "mark_as_required" : false,
+      "field_help_text" : "<p class=\"small\">Property logo and any other logos that should be included (management company, etc.) EPS or PNG format preferred.</p>",
+      "enable_conditional_display_options" : false,
+      "field_display" : "products-present"
+    } ]
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : [ {
+    "section_display" : "products-present",
+    "section_title" : "Artwork: Brand Assets",
+    "section_icon" : "<span class=\"material-symbols-rounded\">upload</span>",
+    "section_help_text_title" : "Need Help?",
+    "section_help_text" : "Helpful content can go here to better guide the user through the onboarding process.",
+    "section_completed_property" : "property_brand_assets_collected",
+    "fields" : [ {
+      "field_title" : "Logo(s)",
+      "ticket_property_name" : "assets_logo",
+      "video_length_ticket_property_name" : "video_length",
+      "video_orientation_ticket_property_name" : "video_orientation",
+      "field_type" : "file",
+      "video_durations" : [ {
+        "duration" : "6s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "15s",
+        "applicable_orientations" : [ "landscape", "portrait" ]
+      }, {
+        "duration" : "30s",
+        "applicable_orientations" : [ "landscape" ]
+      }, {
+        "duration" : "60s",
+        "applicable_orientations" : [ "landscape" ]
+      } ],
+      "radio_options" : [ "No Preference" ],
+      "mark_as_required" : false,
+      "field_help_text" : "<p class=\"small\">Property logo and any other logos that should be included (management company, etc.) EPS or PNG format preferred.</p>",
+      "enable_conditional_display_options" : false,
+      "field_display" : "products-present"
+    } ]
+  } ]
+}, {
+  "id" : "deliverable_status_messages",
+  "name" : "deliverable_status_messages",
+  "label" : "Deliverable Status Messages",
+  "required" : false,
+  "locked" : false,
+  "children" : [ {
+    "id" : "deliverable_status_messages.deliverables_pending_approval",
+    "name" : "deliverables_pending_approval",
+    "label" : "Deliverables Pending Approval",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h2>Looks like you've got some approvals pending.</h2><p>Be sure to click the \"I'm Finished!\" button at the bottom of the page after you've reviewed all items.</p>"
+  }, {
+    "id" : "deliverable_status_messages.all_deliverables_approved",
+    "name" : "all_deliverables_approved",
+    "label" : "All Deliverables Approved",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h2>Looks like you're all set!</h2>"
+  }, {
+    "id" : "deliverable_status_messages.deliverables_rejected",
+    "name" : "deliverables_rejected",
+    "label" : "Deliverables Rejected",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h2>We're working on some revisions.</h2>"
+  }, {
+    "id" : "deliverable_status_messages.ticket_closed",
+    "name" : "ticket_closed",
+    "label" : "Ticket Closed",
+    "required" : false,
+    "locked" : false,
+    "type" : "richtext",
+    "display_width" : null,
+    "default" : "<h2>Looks like you're all set!</h2>"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : {
+    "deliverables_pending_approval" : "<h2>Looks like you've got some approvals pending.</h2><p>Be sure to click the \"I'm Finished!\" button at the bottom of the page after you've reviewed all items.</p>",
+    "all_deliverables_approved" : "<h2>Looks like you're all set!</h2>",
+    "deliverables_rejected" : "<h2>We're working on some revisions.</h2>",
+    "ticket_closed" : "<h2>Looks like you're all set!</h2>"
+  }
+}, {
+  "id" : "approval_sections",
+  "name" : "approval_sections",
+  "label" : "Approval Sections (Deliverables)",
+  "inline_help_text" : "These sections only display when the corresponding deliverables are populated on the ticket record.",
+  "required" : false,
+  "locked" : false,
+  "occurrence" : {
+    "min" : null,
+    "max" : null,
+    "sorting_label_field" : null,
+    "default" : null
+  },
+  "children" : [ {
+    "id" : "approval_sections.title",
+    "name" : "title",
+    "label" : "Title",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "GeofenceiQ™ Advanced Prospect Intelligence Report"
+  }, {
+    "id" : "approval_sections.deliverable_type",
+    "name" : "deliverable_type",
+    "label" : "Deliverable Type",
+    "required" : false,
+    "locked" : false,
+    "allow_new_line" : false,
+    "type" : "text",
+    "display_width" : null,
+    "default" : "Intelligence Report"
+  } ],
+  "tab" : "CONTENT",
+  "expanded" : false,
+  "group_occurrence_meta" : null,
+  "type" : "group",
+  "display_width" : null,
+  "default" : [ ]
+} ]

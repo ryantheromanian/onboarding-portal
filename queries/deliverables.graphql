@@ -1,0 +1,22 @@
+# $ticketId: "{{ dynamic_page_crm_object.id }}"
+query MyQuery($ticketId: String!) {
+  CRM {
+    ticket(uniqueIdentifier: "id", uniqueIdentifierValue: $ticketId) {
+      associations {
+        p_deliverables_collection__deliverables_to_ticket {
+          items {
+            approve
+            deliverable_file_link
+            deliverable_name
+            deliverable_type
+            hs_lastmodifieddate
+            hs_object_id
+            reject_reason
+            status
+            notes_for_client
+          }
+        }
+      }
+    }
+  }
+}

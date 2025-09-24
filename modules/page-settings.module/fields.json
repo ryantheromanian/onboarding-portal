@@ -1,0 +1,25 @@
+[ {
+  "id" : "vertical",
+  "name" : "vertical",
+  "label" : "Vertical",
+  "required" : false,
+  "locked" : false,
+  "display" : "select",
+  "choices" : [ [ "Apartment", "Apartment" ], [ "Hotel", "Hotel" ], [ "Restaurant", "Restaurant" ], [ "Retail", "Retail" ] ],
+  "multiple" : false,
+  "reordering_enabled" : true,
+  "preset" : null,
+  "type" : "choice",
+  "display_width" : null,
+  "default" : "Apartment"
+}, {
+  "id" : "sidebar_label",
+  "name" : "sidebar_label",
+  "label" : "Sidebar Label",
+  "required" : false,
+  "locked" : false,
+  "allow_new_line" : false,
+  "type" : "text",
+  "display_width" : null,
+  "default" : "Onboarding"
+} ]

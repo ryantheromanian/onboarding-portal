@@ -1,0 +1,11 @@
+{
+  "global" : true,
+  "content_types" : [ "LANDING_PAGE", "SITE_PAGE", "BLOG_LISTING", "BLOG_POST" ],
+  "smart_type" : "NOT_SMART",
+  "host_template_types" : [ "PAGE", "BLOG_POST", "BLOG_LISTING" ],
+  "module_id" : 128155059584,
+  "data_query_path" : "../../queries/companies",
+  "label" : "Header",
+  "icon" : "https://www.mediajunction.com/hubfs/mjtw/icons/site-header.svg",
+  "is_available_for_new_content" : false
+}

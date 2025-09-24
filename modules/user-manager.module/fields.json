@@ -1,0 +1,10 @@
+[ {
+  "id" : "header_content",
+  "name" : "header_content",
+  "label" : "Header Content",
+  "required" : false,
+  "locked" : false,
+  "type" : "richtext",
+  "display_width" : null,
+  "default" : "<h1>Team Members</h1><p>p.large / Introductory paragraph provides additional context to the preceeding headline. Most intro paragraphs should be around two to three sentences in length to ensure skimmability.</p>"
+} ]
