@@ -1,52 +1,23 @@
-
-# Location Details Query - UPDATED
-# Excludes: management fees, media spend, custom pricing
-# For: Location details page displayed to customers
-
-query GetLocationDetails($locationId: String!) {
-  location(id: $locationId) {
-    # Basic Info
-    id
-    name
-    location_status
-    campaign_start_date
-    account_rep__dropdown_
-    billing_start_date
-    
-    # Geofencing Package
-    package
-    geofence_package_price
-    geofenceiq
-    geofenceiq_mrr
-    
-    # Creative Package
-    creative___banner_selection
-    creative___video
-    banner___pricing
-    video___pricing
-    client_provided_creative
-    creative_rep
-    creative_volume_discount_
-    date_last_updated__banner
-    date_last_updated__video
-    
-    # Creative Links
-    banner_link_evergreen
-    banner_link_promo
-    video_link__internal_evergreen
-    video_link__internal_promo
-    video_folder_link__external
-    additional_creative_links
-    
-    # Add-Ons
-    kurie_playbook
-    service_tier
-    
-    # Billing Info
-    billing_method
-    billing_contact__name_and_email_
-    billing_start_month
-    campaign_duration
-    predetermined_end_date
+query GetLocationDetails($id: String!) {
+  crmObjects(limit: 1, after: "", filter: {filters: [{propertyName: "hs_object_id", value: $id, operator: EQ}]}) {
+    edges {
+      node {
+        hs_object_id
+        properties {
+          name
+          location_id
+          address
+          campaign_start_date
+          onboarding_status
+          account_rep
+          geofence_package
+          geofence_package_status
+          creative_package
+          creative_package_status
+          creative_links
+          add_ons
+        }
+      }
+    }
   }
 }
