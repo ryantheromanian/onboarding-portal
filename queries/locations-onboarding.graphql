@@ -1,0 +1,34 @@
+
+# Onboarding Locations Query - UPDATED
+# Shows all locations in onboarding/setup process
+# Associated to the logged-in contact's company
+
+query GetOnboardingLocations($companyId: String!) {
+  locations(
+    filter: {
+      company_id: $companyId
+      location_status: [
+        "Onboarding"
+        "Onboarding (Portal)"
+        "In Set Up"
+        "On Hold"
+        "Paused"
+        "Paused for Lack of Payment"
+      ]
+    }
+  ) {
+    edges {
+      node {
+        id
+        name
+        location_status
+        campaign_start_date
+        geofence_package_price
+        creative___banner_selection
+        creative___video
+        account_rep__dropdown_
+        package
+      }
+    }
+  }
+}

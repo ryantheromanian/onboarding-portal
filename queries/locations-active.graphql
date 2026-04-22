@@ -1,0 +1,28 @@
+
+# Active Locations Query - UPDATED
+# Shows all locations with Status = Active
+# Associated to the logged-in contact's company
+
+query GetActiveLocations($companyId: String!) {
+  locations(
+    filter: {
+      company_id: $companyId
+      location_status: "Active"
+    }
+  ) {
+    edges {
+      node {
+        id
+        name
+        location_status
+        campaign_start_date
+        geofence_package_price
+        creative___banner_selection
+        creative___video
+        geofenceiq
+        package
+        account_rep__dropdown_
+      }
+    }
+  }
+}

@@ -1,0 +1,323 @@
+{% extends "./base-layouts/template.html" %}
+
+{% block body %}
+<div class="location-details-wrapper">
+  
+  <!-- Navigation / Breadcrumb -->
+  <div class="breadcrumb-section">
+    <a href="/locations" class="breadcrumb-link">← Back to Locations</a>
+    <h1 class="location-title">{{ location.name }}</h1>
+  </div>
+
+  <!-- Section 1: Basic Info Card -->
+  <div class="detail-section basic-info-section">
+    <h2 class="section-title">Location Overview</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <label class="info-label">Location Name</label>
+        <p class="info-value">{{ location.name }}</p>
+      </div>
+      <div class="info-item">
+        <label class="info-label">Status</label>
+        <p class="info-value status-badge status-{{ location.location_status | lower }}">
+          {{ location.location_status }}
+        </p>
+      </div>
+      <div class="info-item">
+        <label class="info-label">Campaign Start Date</label>
+        <p class="info-value">{{ location.campaign_start_date | format_date }}</p>
+      </div>
+      <div class="info-item">
+        <label class="info-label">Account Rep</label>
+        <p class="info-value">{{ location.account_rep__dropdown_ }}</p>
+      </div>
+      <div class="info-item">
+        <label class="info-label">Billing Start Date</label>
+        <p class="info-value">{{ location.billing_start_date | format_date }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Geofencing Package -->
+  <div class="detail-section geofencing-section">
+    <h2 class="section-title">Geofencing Package</h2>
+    
+    {% if location.package != 'No Geofencing Services' %}
+    <div class="package-card">
+      <div class="package-header">
+        <h3 class="package-name">{{ location.package }}</h3>
+      </div>
+      
+      <div class="package-details">
+        <div class="detail-row">
+          <span class="detail-label">Package Type:</span>
+          <span class="detail-value">{{ location.package }}</span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="detail-label">Price:</span>
+          <span class="detail-value price-highlight">{{ location.geofence_package_price }}</span>
+        </div>
+      </div>
+
+      <!-- GeofenceIQ Add-on (if applicable) -->
+      {% if location.geofenceiq and location.geofenceiq != 'None' %}
+      <div class="addon-section">
+        <h4 class="addon-title">GeofenceIQ Add-on</h4>
+        <div class="addon-details">
+          <div class="detail-row">
+            <span class="detail-label">Service:</span>
+            <span class="detail-value">{{ location.geofenceiq }}</span>
+          </div>
+          {% if location.geofenceiq_mrr %}
+          <div class="detail-row">
+            <span class="detail-label">Monthly Cost:</span>
+            <span class="detail-value price-highlight">${{ location.geofenceiq_mrr }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="no-data-message">No geofencing services currently active.</p>
+    {% endif %}
+  </div>
+
+  <!-- Section 3: Creative Package -->
+  <div class="detail-section creative-section">
+    <h2 class="section-title">Creative Package</h2>
+    
+    {% if location.creative___banner_selection != 'None' or location.creative___video != 'None' %}
+    <div class="creative-cards-container">
+      
+      <!-- Banner Card -->
+      {% if location.creative___banner_selection and location.creative___banner_selection != 'None' %}
+      <div class="creative-card banner-card">
+        <h3 class="creative-type">Banner</h3>
+        <div class="creative-info">
+          <div class="detail-row">
+            <span class="detail-label">Type:</span>
+            <span class="detail-value">{{ location.creative___banner_selection }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Price:</span>
+            <span class="detail-value price-highlight">{{ location.banner___pricing }}</span>
+          </div>
+          {% if location.date_last_updated__banner %}
+          <div class="detail-row">
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ location.date_last_updated__banner | format_date }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Video Card -->
+      {% if location.creative___video and location.creative___video != 'None' %}
+      <div class="creative-card video-card">
+        <h3 class="creative-type">Video</h3>
+        <div class="creative-info">
+          <div class="detail-row">
+            <span class="detail-label">Type:</span>
+            <span class="detail-value">{{ location.creative___video }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Price:</span>
+            <span class="detail-value price-highlight">{{ location.video___pricing }}</span>
+          </div>
+          {% if location.date_last_updated__video %}
+          <div class="detail-row">
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ location.date_last_updated__video | format_date }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Client Provided Creative -->
+    {% if location.client_provided_creative and location.client_provided_creative != 'No' %}
+    <div class="client-creative-section">
+      <h4 class="subsection-title">Client Provided Creative</h4>
+      <p class="detail-value">{{ location.client_provided_creative }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Creative Rep & Volume Discount -->
+    <div class="creative-meta">
+      {% if location.creative_rep %}
+      <div class="detail-row">
+        <span class="detail-label">Assigned Rep:</span>
+        <span class="detail-value">{{ location.creative_rep }}</span>
+      </div>
+      {% endif %}
+      {% if location.creative_volume_discount_ %}
+      <div class="detail-row">
+        <span class="detail-label">Volume Discount:</span>
+        <span class="detail-value">{{ location.creative_volume_discount_ }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% else %}
+    <p class="no-data-message">No creative services currently active.</p>
+    {% endif %}
+  </div>
+
+  <!-- Section 4: Creative Links -->
+  <div class="detail-section creative-links-section">
+    <h2 class="section-title">Live Creative Assets</h2>
+    
+    <div class="creative-links-container">
+      
+      <!-- Banner Links -->
+      <div class="links-category">
+        <h3 class="category-title">Banner Links</h3>
+        
+        {% if location.banner_link_evergreen %}
+        <div class="link-item">
+          <span class="link-label">Evergreen Banner:</span>
+          <a href="{{ location.banner_link_evergreen }}" target="_blank" class="creative-link">
+            View Banner →
+          </a>
+        </div>
+        {% endif %}
+        
+        {% if location.banner_link_promo %}
+        <div class="link-item">
+          <span class="link-label">Promo Banner:</span>
+          <a href="{{ location.banner_link_promo }}" target="_blank" class="creative-link">
+            View Banner →
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Video Links -->
+      <div class="links-category">
+        <h3 class="category-title">Video Links</h3>
+        
+        {% if location.video_link__internal_evergreen %}
+        <div class="link-item">
+          <span class="link-label">Evergreen Video:</span>
+          <a href="{{ location.video_link__internal_evergreen }}" target="_blank" class="creative-link">
+            View Video →
+          </a>
+        </div>
+        {% endif %}
+        
+        {% if location.video_link__internal_promo %}
+        <div class="link-item">
+          <span class="link-label">Promo Video:</span>
+          <a href="{{ location.video_link__internal_promo }}" target="_blank" class="creative-link">
+            View Video →
+          </a>
+        </div>
+        {% endif %}
+        
+        {% if location.video_folder_link__external %}
+        <div class="link-item">
+          <span class="link-label">Video Folder:</span>
+          <a href="{{ location.video_folder_link__external }}" target="_blank" class="creative-link">
+            View Folder →
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Additional Links -->
+      {% if location.additional_creative_links %}
+      <div class="links-category">
+        <h3 class="category-title">Additional Resources</h3>
+        <div class="link-item">
+          {{ location.additional_creative_links }}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Section 5: Add-Ons -->
+  {% if location.geofenceiq or location.kurie_playbook or location.service_tier %}
+  <div class="detail-section addons-section">
+    <h2 class="section-title">Add-Ons & Services</h2>
+    
+    <div class="addons-grid">
+      {% if location.geofenceiq and location.geofenceiq != 'None' %}
+      <div class="addon-item">
+        <h4 class="addon-name">GeofenceIQ</h4>
+        <p class="addon-value">{{ location.geofenceiq }}</p>
+      </div>
+      {% endif %}
+
+      {% if location.kurie_playbook %}
+      <div class="addon-item">
+        <h4 class="addon-name">Kurie Playbook</h4>
+        <p class="addon-value">{{ location.kurie_playbook }}</p>
+      </div>
+      {% endif %}
+
+      {% if location.service_tier %}
+      <div class="addon-item">
+        <h4 class="addon-name">Service Tier</h4>
+        <p class="addon-value">{{ location.service_tier }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Section 6: Billing Info -->
+  <div class="detail-section billing-section">
+    <h2 class="section-title">Billing Information</h2>
+    
+    <div class="billing-info">
+      {% if location.billing_method %}
+      <div class="detail-row">
+        <span class="detail-label">Billing Method:</span>
+        <span class="detail-value">{{ location.billing_method }}</span>
+      </div>
+      {% endif %}
+
+      {% if location.billing_contact__name_and_email_ %}
+      <div class="detail-row">
+        <span class="detail-label">Billing Contact:</span>
+        <span class="detail-value">{{ location.billing_contact__name_and_email_ }}</span>
+      </div>
+      {% endif %}
+
+      {% if location.billing_start_month %}
+      <div class="detail-row">
+        <span class="detail-label">Billing Start Month:</span>
+        <span class="detail-value">{{ location.billing_start_month }}</span>
+      </div>
+      {% endif %}
+
+      {% if location.billing_start_date %}
+      <div class="detail-row">
+        <span class="detail-label">Billing Start Date:</span>
+        <span class="detail-value">{{ location.billing_start_date | format_date }}</span>
+      </div>
+      {% endif %}
+
+      {% if location.campaign_duration %}
+      <div class="detail-row">
+        <span class="detail-label">Campaign Duration:</span>
+        <span class="detail-value">{{ location.campaign_duration }}</span>
+      </div>
+      {% endif %}
+
+      {% if location.campaign_duration == 'Predetermind End Date' and location.predetermined_end_date %}
+      <div class="detail-row">
+        <span class="detail-label">Campaign End Date:</span>
+        <span class="detail-value">{{ location.predetermined_end_date | format_date }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
